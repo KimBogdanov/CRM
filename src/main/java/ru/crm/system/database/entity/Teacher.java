@@ -58,9 +58,4 @@ public class Teacher implements BaseEntity<Integer> {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TeacherSalary teacherSalary;
-
-    public void addLesson(Lesson lesson) {
-        lessons.add(lesson);
-        lesson.setTeacher(this);
-    }
 }

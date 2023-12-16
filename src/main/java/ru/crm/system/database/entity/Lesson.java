@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.crm.system.database.entity.enums.LessonStatus;
+import ru.crm.system.database.entity.enums.LessonType;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -26,11 +27,11 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(exclude = {"id", "student", "teacher"})
 @ToString(exclude = {"student", "teacher"})
 @Entity
-public class Lesson implements BaseEntity<Long> {
+public class Lesson implements BaseEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Student student;
@@ -42,11 +43,14 @@ public class Lesson implements BaseEntity<Long> {
 
     private Integer duration;
 
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Subject subject;
 
     @Enumerated(EnumType.STRING)
     private LessonStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private LessonType type;
 
     private String description;
 

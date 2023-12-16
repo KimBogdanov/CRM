@@ -40,9 +40,4 @@ public class TeacherSalary implements BaseEntity<Integer> {
     @Builder.Default
     @OneToMany(mappedBy = "teacherSalary")
     private List<Teacher> teachers = new ArrayList<>();
-
-    public void addTeacher(Teacher teacher) {
-        teachers.add(teacher);
-        teacher.setTeacherSalary(this);
-    }
 }

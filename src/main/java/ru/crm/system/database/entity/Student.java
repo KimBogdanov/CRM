@@ -41,9 +41,4 @@ public class Student implements BaseEntity<Integer> {
     @Builder.Default
     @OneToMany(mappedBy = "student")
     private List<Lesson> lessons = new ArrayList<>();
-
-    public void addLesson(Lesson lesson) {
-        lessons.add(lesson);
-        lesson.setStudent(this);
-    }
 }

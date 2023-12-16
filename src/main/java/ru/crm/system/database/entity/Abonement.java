@@ -25,11 +25,11 @@ import java.time.LocalDate;
 @EqualsAndHashCode(exclude = {"id", "type"})
 @ToString(exclude = {"id", "type"})
 @Entity
-public class Abonement implements BaseEntity<Long> {
+public class Abonement implements BaseEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private Integer numberOfLessons;
 

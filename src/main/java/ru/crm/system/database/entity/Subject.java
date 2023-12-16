@@ -38,9 +38,4 @@ public class Subject implements BaseEntity<Integer> {
     @Builder.Default
     @ManyToMany
     private List<Teacher> teachers = new ArrayList<>();
-
-    public void addStudent(Student student) {
-        students.add(student);
-        student.setSubject(this);
-    }
 }

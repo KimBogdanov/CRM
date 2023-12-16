@@ -33,9 +33,4 @@ public class AbonementType implements BaseEntity<Integer> {
     @Builder.Default
     @OneToMany(mappedBy = "type")
     private List<Abonement> abonements = new ArrayList<>();
-
-    public void addAbonement(Abonement abonement) {
-        abonements.add(abonement);
-        abonement.setType(this);
-    }
 }

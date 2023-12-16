@@ -38,9 +38,4 @@ public class Admin implements BaseEntity<Integer> {
     @Builder.Default
     @OneToMany(mappedBy = "admin")
     private List<Order> orders = new ArrayList<>();
-
-    public void addOrder(Order order) {
-        orders.add(order);
-        order.setAdmin(this);
-    }
 }

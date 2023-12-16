@@ -40,7 +40,7 @@ public class Order implements BaseEntity<Long> {
     @Column(nullable = false)
     private OrderStatus status;
 
-    private String reason;
+    private String reasonOfStatus;
 
     private String description;
 
