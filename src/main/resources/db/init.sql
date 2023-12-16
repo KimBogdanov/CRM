@@ -99,6 +99,7 @@ CREATE TABLE IF NOT EXISTS lesson
     duration    INT         NOT NULL,
     subject_id  INT         NOT NULL REFERENCES subject (id),
     status      VARCHAR(64) NOT NULL,
+    type        VARCHAR(64),
     description VARCHAR(128),
     cost        NUMERIC(2, 10)
 );
