@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ru.crm.system.converter.MoneyConverter;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,6 +35,7 @@ public class Admin implements BaseEntity<Integer> {
     private UserInfo userInfo;
 
     @Column(nullable = false)
+    @Convert(converter = MoneyConverter.class)
     private BigDecimal shiftRate;
 
     @Builder.Default

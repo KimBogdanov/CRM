@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ru.crm.system.converter.MoneyConverter;
 import ru.crm.system.database.entity.enums.SalaryType;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -35,6 +37,7 @@ public class TeacherSalary implements BaseEntity<Integer> {
     @Enumerated(EnumType.STRING)
     private SalaryType type;
 
+    @Convert(converter = MoneyConverter.class)
     private BigDecimal rate;
 
     @Builder.Default
