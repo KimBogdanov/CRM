@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS admin
     email      VARCHAR(128)  NOT NULL UNIQUE,
     password   VARCHAR(64)   NOT NULL,
     role       VARCHAR(32)   NOT NULL,
-    shift_rate NUMERIC(2, 4) NOT NULL,
+    shift_rate NUMERIC(8, 2) NOT NULL,
     avatar     VARCHAR(128)
 );
 -- rollback DROP TABLE admin
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS teacher_salary
 (
     id   INT AUTO_INCREMENT PRIMARY KEY,
     type VARCHAR(128),
-    rate NUMERIC(2, 10) NOT NULL
+    rate NUMERIC(10, 2) NOT NULL
 );
 --rollback DROP TABLE teacher_salary;
 
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS lesson
     status      VARCHAR(64) NOT NULL,
     type        VARCHAR(64),
     description VARCHAR(128),
-    cost        NUMERIC(2, 10)
+    cost        NUMERIC(10, 2)
 );
 --rollback DROP TABLE lesson;
 
