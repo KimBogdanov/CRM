@@ -38,6 +38,6 @@ public class TeacherSalary implements BaseEntity<Integer> {
     private BigDecimal rate;
 
     @Builder.Default
-    @OneToMany(mappedBy = "teacherSalary")
+    @OneToMany(mappedBy = "salaryPerHour")
     private List<Teacher> teachers = new ArrayList<>();
 }

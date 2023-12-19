@@ -10,6 +10,8 @@ import ru.crm.system.database.entity.enums.OrderStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,11 +28,11 @@ import java.time.LocalDateTime;
 @ToString(exclude = {"id", "admin"})
 @Table(name = "orders")
 @Entity
-public class Order implements BaseEntity<Long> {
+public class Order implements BaseEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -38,8 +40,10 @@ public class Order implements BaseEntity<Long> {
     private String phone;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Column(name = "reason")
     private String reasonOfStatus;
 
     private String description;
