@@ -32,4 +32,9 @@ public class AdminService {
                 .map(adminReadMapper::map)
                 .orElseThrow();
     }
+
+    public Optional<AdminReadDto> findById(Integer id) {
+        return adminRepository.findById(id)
+                .map(adminReadMapper::map);
+    }
 }
