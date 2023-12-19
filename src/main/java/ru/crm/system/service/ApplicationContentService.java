@@ -17,10 +17,10 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 public class ApplicationContentService {
 
 //    @Value("${spring.servlet.multipart.location}")
-    private final String bucket = "\\src\\main\\resources\\images\\";
+    private final String bucket = ".\\src\\main\\resources\\images\\";
 
 //    @Value("${my-app.content.no-image-available}")
-    private final String contentNotFoundImage = "\\src\\main\\resources\\images\\NoImageAvailable.jpg";
+    private final String contentNotFoundImage = ".\\src\\main\\resources\\images\\NoImageAvailable.jpg";
 
     @SneakyThrows
     public void uploadImage(MultipartFile content) {

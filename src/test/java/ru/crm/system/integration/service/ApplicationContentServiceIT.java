@@ -1,4 +1,4 @@
-package ru.crm.system.integration;
+package ru.crm.system.integration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class ApplicationContentServiceIT {
 
-    private final String bucket = "\\src\\main\\resources\\images\\";
+    private final String bucket = ".\\src\\main\\resources\\images\\";
     private final ApplicationContentService applicationContentService;
     private MockMultipartFile dummyImage;
     private Path fullPathToImage;
