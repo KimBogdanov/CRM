@@ -19,6 +19,7 @@ import ru.crm.system.service.AdminService;
 import ru.crm.system.service.ApplicationContentService;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -29,6 +30,8 @@ import static org.mockito.Mockito.when;
 @RequiredArgsConstructor
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
+
+    private static final Integer EXISTING_ADMIN_ID = 1;
 
     @Mock
     private AdminRepository adminRepository;
@@ -62,6 +65,19 @@ public class AdminServiceTest {
         });
 
         verify(applicationContentService).uploadImage(any());
+    }
+
+    @Test
+    void findById_shouldFindById_ifAdminExists() {
+        var existingAdmin = getAdmin();
+        var adminReadDto = getAdminReadDto();
+
+        when(adminRepository.findById(EXISTING_ADMIN_ID)).thenReturn(Optional.of(existingAdmin));
+        when(adminReadMapper.map(existingAdmin)).thenReturn(adminReadDto);
+        var actualAdmin = adminService.findById(EXISTING_ADMIN_ID);
+
+        assertThat(actualAdmin).isPresent();
+        actualAdmin.ifPresent(admin -> assertThat(admin).isEqualTo(adminReadDto));
     }
 
     private AdminCreateEditDto getAdminCreateDto() {
