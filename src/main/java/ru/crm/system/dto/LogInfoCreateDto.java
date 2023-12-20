@@ -1,15 +1,20 @@
 package ru.crm.system.dto;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import ru.crm.system.database.entity.enums.ActionType;
 
 import java.time.LocalDateTime;
 
+@Data
 @Builder
 @FieldNameConstants
-public record LogInfoCreateDto(ActionType action,
-                               String description,
-                               LocalDateTime createdAt,
-                               Integer orderId) {
+public final class LogInfoCreateDto {
+
+    private ActionType action;
+    private String description;
+    private LocalDateTime createdAt;
+    private Integer orderId;
+    private Integer adminId;
 }
