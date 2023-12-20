@@ -14,16 +14,35 @@ CREATE TABLE IF NOT EXISTS admin
 
 CREATE TABLE IF NOT EXISTS orders
 (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    name        VARCHAR(64),
-    phone       VARCHAR(32) NOT NULL,
-    status      VARCHAR(64) NOT NULL,
-    reason      VARCHAR(512),
-    description VARCHAR(512),
-    created_at  TIMESTAMP   NOT NULL,
-    admin_id    INT REFERENCES admin (id)
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    status         VARCHAR(64) NOT NULL,
+    order_name     VARCHAR(64),
+    client_name    VARCHAR(64),
+    phone          VARCHAR(32) NOT NULL,
+    request_source VARCHAR(512),
+    created_at     TIMESTAMP   NOT NULL,
+    admin_id       INT REFERENCES admin (id)
 );
 -- rollback DROP TABLE orders;
+
+CREATE TABLE IF NOT EXISTS comment
+(
+    id       INT AUTO_INCREMENT PRIMARY KEY,
+    text     VARCHAR(256),
+    order_id INT REFERENCES orders (id)
+);
+-- rollback DROP TABLE comment;
+
+CREATE TABLE IF NOT EXISTS log_info
+(
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    action_type VARCHAR(256),
+    description VARCHAR(256),
+    created_at  TIMESTAMP NOT NULL,
+    admin_id    INT REFERENCES admin (id),
+    order_id    INT REFERENCES orders (id)
+);
+--rollback DROP TABLE log_info;
 
 CREATE TABLE IF NOT EXISTS subject
 (
