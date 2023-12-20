@@ -23,7 +23,6 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
                 .orderName(createDto.orderName())
                 .clientName(createDto.clientName())
                 .phone(createDto.phone())
-                .status(createDto.status())
                 .createdAt(LocalDateTime.now())
                 .requestSource(createDto.requestSource())
                 .admin(getAdmin(createDto.adminId()))
