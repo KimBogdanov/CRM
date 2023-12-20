@@ -24,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "userInfo")
-@ToString(exclude = {"id", "orders"})
+@ToString(exclude = {"id", "orders", "logInfos"})
 @Entity
 public class Admin implements BaseEntity<Integer> {
 
@@ -41,4 +41,8 @@ public class Admin implements BaseEntity<Integer> {
     @Builder.Default
     @OneToMany(mappedBy = "admin")
     private List<Order> orders = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "admin")
+    private List<LogInfo> logInfos = new ArrayList<>();
 }
