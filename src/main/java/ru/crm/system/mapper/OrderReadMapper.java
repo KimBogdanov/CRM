@@ -12,6 +12,7 @@ public class OrderReadMapper implements Mapper<Order, OrderReadDto> {
     @Override
     public OrderReadDto map(Order entity) {
         return OrderReadDto.builder()
+                .id(entity.getId())
                 .status(entity.getStatus())
                 .orderName(entity.getOrderName())
                 .clientName(entity.getClientName())

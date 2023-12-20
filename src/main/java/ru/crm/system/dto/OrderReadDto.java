@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 
 @Builder
 @FieldNameConstants
-public record OrderReadDto(OrderStatus status,
+public record OrderReadDto(Integer id,
+                           OrderStatus status,
                            String orderName,
                            String clientName,
                            String phone,

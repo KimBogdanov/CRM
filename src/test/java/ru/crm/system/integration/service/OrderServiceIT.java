@@ -9,13 +9,14 @@ import ru.crm.system.service.OrderService;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @IT
 @RequiredArgsConstructor
 public class OrderServiceIT {
 
     private static final Integer EXISTING_ADMIN_ID = 1;
+    private static final Integer EXISTING_ORDER_ID = 1;
 
     private final OrderService orderService;
 
@@ -23,9 +24,9 @@ public class OrderServiceIT {
     void create_shouldCreateOrderAndLogInfo() {
         var createDto = getOrderCreateEditDto();
 
-        var orderId = orderService.create(createDto);
+        var actualOrder = orderService.create(createDto);
 
-        assertThat(orderId).isPositive();
+        assertThat(actualOrder.id()).isPositive();
     }
 
     private OrderCreateEditDto getOrderCreateEditDto() {
