@@ -12,7 +12,8 @@ public class EntityListener {
 
     private final LogInfoService logInfoService;
 
-    @EventListener(condition = "#p0.accessType.name() == 'CREATE'")
+    @EventListener(condition = "#p0.accessType.name() == 'CREATE' or " +
+            "#p0.accessType.name() == 'CHANGE_STATUS'")
     public void acceptEntityCreate(EntityEvent<Order> event) {
         var createEditDto = event.getLogInfoCreateDto();
         logInfoService.create(createEditDto);
