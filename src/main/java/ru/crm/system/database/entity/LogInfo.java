@@ -5,41 +5,40 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import ru.crm.system.database.entity.enums.ActionType;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(of = "userInfo")
-@ToString(exclude = {"subject", "abonements", "lessons"})
+@EqualsAndHashCode(exclude = "id")
 @Entity
-public class Student implements BaseEntity<Integer> {
+public class LogInfo implements BaseEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private UserInfo userInfo;
+    @Enumerated(EnumType.STRING)
+    private ActionType actionType;
+
+    private String description;
+
+    private LocalDateTime createdAt;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Subject subject;
+    private Admin admin;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "student")
-    private List<Abonement> abonements = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "student")
-    private List<Lesson> lessons = new ArrayList<>();
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Order order;
 }
