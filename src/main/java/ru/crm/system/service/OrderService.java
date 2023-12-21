@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.crm.system.database.entity.Comment;
 import ru.crm.system.database.entity.enums.ActionType;
 import ru.crm.system.database.entity.enums.OrderStatus;
+import ru.crm.system.database.repository.AdminRepository;
 import ru.crm.system.database.repository.OrderRepository;
 import ru.crm.system.dto.loginfo.LogInfoCreateDto;
 import ru.crm.system.dto.order.OrderCreateEditDto;
@@ -31,6 +32,7 @@ public class OrderService {
     private final OrderCreateEditMapper orderCreatedEditMapper;
     private final ApplicationEventPublisher publisher;
     private final OrderReadMapper orderReadMapper;
+    private final AdminRepository adminRepository;
 
     @Transactional
     public OrderReadDto create(OrderCreateEditDto createDto) {
@@ -39,6 +41,7 @@ public class OrderService {
                 .map(orderRepository::save)
                 .map(order -> {
                     var logInfo = createLogInfo(order.getId());
+                    logInfo.setDescription("Создана новая заявка");
                     logInfo.setAction(ActionType.CREATED);
                     publisher.publishEvent(new EntityEvent<>(order, AccessType.CREATE, logInfo));
                     return orderReadMapper.map(order);
@@ -49,16 +52,16 @@ public class OrderService {
     @Transactional
     public OrderReadDto changeStatus(Integer orderId,
                                      OrderStatus status,
-                                     Integer adminId,
-                                     String description) {
+                                     Integer adminId) {
         return Optional.ofNullable(orderId)
                 .flatMap(orderRepository::findById)
                 .map(order -> {
                     var logInfo = createLogInfo(order.getId());
-                    setLogInfo(adminId, description, logInfo);
+                    setLogInfo(adminId, status, logInfo);
                     publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
+                    var maybeAdmin = adminRepository.findById(adminId);
+                    maybeAdmin.ifPresent(order::setAdmin);
                     order.setStatus(status);
-                    order.addComment(createComment());
                     var changedOrder = orderRepository.saveAndFlush(order);
                     return orderReadMapper.map(changedOrder);
                 }).orElseThrow();
@@ -86,9 +89,9 @@ public class OrderService {
         return Comment.of("Новый заказ", now().truncatedTo(SECONDS));
     }
 
-    private static void setLogInfo(Integer adminId, String description, LogInfoCreateDto logInfo) {
-        logInfo.setAction(ActionType.COMMENT);
+    private static void setLogInfo(Integer adminId, OrderStatus status, LogInfoCreateDto logInfo) {
+        logInfo.setAction(ActionType.CHANGE_ORDER_STATUS);
         logInfo.setAdminId(adminId);
-        logInfo.setDescription(description);
+        logInfo.setDescription("Статус заявки изменён на: " + status.name());
     }
 }
