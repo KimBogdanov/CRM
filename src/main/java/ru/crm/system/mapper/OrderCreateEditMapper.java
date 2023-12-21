@@ -29,6 +29,18 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
                 .build();
     }
 
+    @Override
+    public Order map(OrderCreateEditDto editDto, Order entity) {
+        entity.setStatus(editDto.status());
+        entity.setOrderName(editDto.orderName());
+        entity.setClientName(editDto.clientName());
+        entity.setPhone(editDto.phone());
+        entity.setCreatedAt(editDto.createdAt());
+        entity.setRequestSource(editDto.requestSource());
+        entity.setAdmin(getAdmin(editDto.adminId()));
+        return entity;
+    }
+
     private Admin getAdmin(Integer id) {
         return Optional.ofNullable(id)
                 .flatMap(adminRepository::findById)
