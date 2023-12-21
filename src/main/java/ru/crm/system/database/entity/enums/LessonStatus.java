@@ -1,5 +1,8 @@
 package ru.crm.system.database.entity.enums;
 
+/**
+ * статус проведения урока - удачно, неудачно, по какой причине
+ */
 public enum LessonStatus {
     SUCCESSFUL,
     CANCELED,
