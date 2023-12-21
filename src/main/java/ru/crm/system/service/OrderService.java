@@ -70,6 +70,11 @@ public class OrderService {
                 .toList();
     }
 
+    public Optional<OrderReadDto> findById(Integer id) {
+        return orderRepository.findById(id)
+                .map(orderReadMapper::map);
+    }
+
     private LogInfoCreateDto createLogInfo(Integer orderId) {
         return LogInfoCreateDto.builder()
                 .createdAt(now().truncatedTo(SECONDS))
