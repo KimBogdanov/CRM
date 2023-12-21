@@ -53,4 +53,12 @@ public class OrderRestController {
         return orderService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
+
+    @PostMapping("{id}/change-status")
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderReadDto changeStatus(@PathVariable("id") Integer orderId,
+                                     OrderStatus status,
+                                     Integer adminId) {
+        return orderService.changeStatus(orderId, status, adminId);
+    }
 }
