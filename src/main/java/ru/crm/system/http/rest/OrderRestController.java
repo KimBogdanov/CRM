@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +42,7 @@ public class OrderRestController {
      * Метод для получения всех возможных статусов заказа,
      * чтобы было можно менять статус при перетаскивании заказа в окне заказов.
      */
-    @GetMapping("/status")
+    @GetMapping("/statuses")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderStatus> getStatuses() {
         return List.of(OrderStatus.values());
@@ -60,5 +61,14 @@ public class OrderRestController {
                                      OrderStatus status,
                                      Integer adminId) {
         return orderService.changeStatus(orderId, status, adminId);
+    }
+
+    @PatchMapping("/{id}/update")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderReadDto update(@PathVariable("id") Integer orderId,
+                               Integer adminId,
+                               @RequestBody OrderCreateEditDto editDto) {
+        return orderService.update(orderId, adminId, editDto)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
