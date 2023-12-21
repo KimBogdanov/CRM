@@ -24,10 +24,7 @@ public class AdminService {
     @Transactional
     public AdminReadDto create(AdminCreateEditDto createDto) {
         return Optional.of(createDto)
-                .map(adminCreateDto -> {
-                    applicationContentService.uploadImage(adminCreateDto.avatar());
-                    return adminCreateEditMapper.map(adminCreateDto);
-                })
+                .map(adminCreateEditMapper::map)
                 .map(adminRepository::save)
                 .map(adminReadMapper::map)
                 .orElseThrow();
