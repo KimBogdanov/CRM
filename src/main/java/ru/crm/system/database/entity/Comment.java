@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -13,4 +14,5 @@ import javax.persistence.Embeddable;
 public class Comment {
 
     private String text;
+    private LocalDateTime addedAt;
 }
