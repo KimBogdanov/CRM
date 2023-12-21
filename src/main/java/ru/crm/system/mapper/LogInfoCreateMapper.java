@@ -7,7 +7,7 @@ import ru.crm.system.database.entity.LogInfo;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.database.repository.AdminRepository;
 import ru.crm.system.database.repository.OrderRepository;
-import ru.crm.system.dto.LogInfoCreateDto;
+import ru.crm.system.dto.loginfo.LogInfoCreateDto;
 
 import java.util.Optional;
 

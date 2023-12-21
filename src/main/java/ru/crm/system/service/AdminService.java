@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.crm.system.database.repository.AdminRepository;
-import ru.crm.system.dto.AdminCreateEditDto;
-import ru.crm.system.dto.AdminReadDto;
+import ru.crm.system.dto.admin.AdminCreateEditDto;
+import ru.crm.system.dto.admin.AdminReadDto;
 import ru.crm.system.mapper.AdminCreateEditMapper;
 import ru.crm.system.mapper.AdminReadMapper;
 

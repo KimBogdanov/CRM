@@ -1,4 +1,4 @@
-package ru.crm.system.dto;
+package ru.crm.system.dto.order;
 
 import lombok.Builder;
 import lombok.experimental.FieldNameConstants;

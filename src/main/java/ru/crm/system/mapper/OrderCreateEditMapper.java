@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Admin;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.database.repository.AdminRepository;
-import ru.crm.system.dto.OrderCreateEditDto;
+import ru.crm.system.dto.order.OrderCreateEditDto;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

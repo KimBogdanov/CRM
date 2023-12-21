@@ -3,7 +3,7 @@ package ru.crm.system.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Order;
-import ru.crm.system.dto.OrderReadDto;
+import ru.crm.system.dto.order.OrderReadDto;
 
 @RequiredArgsConstructor
 @Component

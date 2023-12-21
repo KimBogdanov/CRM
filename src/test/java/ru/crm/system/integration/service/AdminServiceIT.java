@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import ru.crm.system.dto.AdminCreateEditDto;
+import ru.crm.system.dto.admin.AdminCreateEditDto;
 import ru.crm.system.integration.IT;
 import ru.crm.system.service.AdminService;
 

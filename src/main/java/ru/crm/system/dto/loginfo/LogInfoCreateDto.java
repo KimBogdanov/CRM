@@ -1,4 +1,4 @@
-package ru.crm.system.dto;
+package ru.crm.system.dto.loginfo;
 
 import lombok.Builder;
 import lombok.Data;
