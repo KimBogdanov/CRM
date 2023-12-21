@@ -78,6 +78,24 @@ public class OrderService {
                 .map(orderReadMapper::map);
     }
 
+    @Transactional
+    public Optional<OrderReadDto> update(Integer orderId,
+                                         Integer adminId,
+                                         OrderCreateEditDto editDto) {
+        return orderRepository.findById(orderId)
+                .map(order -> {
+                    if (order.getStatus() != editDto.status()) {
+                        var logInfo = createLogInfo(orderId);
+                        setLogInfo(adminId, editDto.status(), logInfo);
+                        publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
+                    }
+                    orderCreatedEditMapper.map(editDto, order);
+                    return order;
+                })
+                .map(orderRepository::saveAndFlush)
+                .map(orderReadMapper::map);
+    }
+
     private LogInfoCreateDto createLogInfo(Integer orderId) {
         return LogInfoCreateDto.builder()
                 .createdAt(now().truncatedTo(SECONDS))
@@ -89,8 +107,19 @@ public class OrderService {
         return Comment.of("Новый заказ", now().truncatedTo(SECONDS));
     }
 
-    private static void setLogInfo(Integer adminId, OrderStatus status, LogInfoCreateDto logInfo) {
-        logInfo.setAction(ActionType.CHANGE_ORDER_STATUS);
+    private ActionType getActionType(OrderStatus status) {
+        return switch (status) {
+            case APPOINTMENT_SCHEDULED, APPOINTMENT_COMPLETED -> ActionType.CHANGE_ORDER_STATUS;
+            case SUCCESSFULLY_COMPLETED -> ActionType.SUCCESSFULLY_COMPLETED;
+            case POOR_LEAD, REFUSED_TO_PURCHASE -> ActionType.COMPLETED_UNSUCCESSFULLY;
+            case RESERVED -> ActionType.ARCHIVED;
+            case UNPROCESSED -> ActionType.CREATED;
+        };
+    }
+
+    private void setLogInfo(Integer adminId, OrderStatus status, LogInfoCreateDto logInfo) {
+        var actionType = getActionType(status);
+        logInfo.setAction(actionType);
         logInfo.setAdminId(adminId);
         logInfo.setDescription("Статус заявки изменён на: " + status.name());
     }
