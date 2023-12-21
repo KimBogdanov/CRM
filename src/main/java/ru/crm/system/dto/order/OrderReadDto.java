@@ -4,8 +4,6 @@ import lombok.Builder;
 import lombok.experimental.FieldNameConstants;
 import ru.crm.system.database.entity.enums.OrderStatus;
 
-import java.time.LocalDateTime;
-
 @Builder
 @FieldNameConstants
 public record OrderReadDto(Integer id,
@@ -14,6 +12,6 @@ public record OrderReadDto(Integer id,
                            String clientName,
                            String phone,
                            String requestSource,
-                           LocalDateTime createdAt,
+                           String createdAt,
                            Integer adminId) {
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.dto.order.OrderReadDto;
+import ru.crm.system.uitl.DateTimeUtil;
 
 @RequiredArgsConstructor
 @Component
@@ -11,6 +12,8 @@ public class OrderReadMapper implements Mapper<Order, OrderReadDto> {
 
     @Override
     public OrderReadDto map(Order entity) {
+        var dateTime = DateTimeUtil.formatLocalDateTime(entity.getCreatedAt());
+
         return OrderReadDto.builder()
                 .id(entity.getId())
                 .status(entity.getStatus())
@@ -18,7 +21,7 @@ public class OrderReadMapper implements Mapper<Order, OrderReadDto> {
                 .clientName(entity.getClientName())
                 .phone(entity.getPhone())
                 .requestSource(entity.getRequestSource())
-                .createdAt(entity.getCreatedAt())
+                .createdAt(dateTime)
                 .build();
     }
 }
