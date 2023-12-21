@@ -16,6 +16,7 @@ import ru.crm.system.listener.entity.EntityEvent;
 import ru.crm.system.mapper.OrderCreateEditMapper;
 import ru.crm.system.mapper.OrderReadMapper;
 
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
@@ -63,9 +64,15 @@ public class OrderService {
                 }).orElseThrow();
     }
 
+    public List<OrderReadDto> findAll() {
+        return orderRepository.findAll().stream()
+                .map(orderReadMapper::map)
+                .toList();
+    }
+
     private LogInfoCreateDto createLogInfo(Integer orderId) {
         return LogInfoCreateDto.builder()
-                .createdAt(now())
+                .createdAt(now().truncatedTo(SECONDS))
                 .orderId(orderId)
                 .build();
     }
