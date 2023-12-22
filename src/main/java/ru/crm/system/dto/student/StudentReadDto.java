@@ -2,7 +2,6 @@ package ru.crm.system.dto.student;
 
 import lombok.Builder;
 import lombok.experimental.FieldNameConstants;
-import ru.crm.system.database.entity.Subject;
 
 import java.math.BigDecimal;
 
@@ -14,6 +13,6 @@ public record StudentReadDto(Integer id,
                              String phone,
                              String email,
                              String avatar,
-                             Subject subject,
+                             String subject,
                              BigDecimal balance) {
 }

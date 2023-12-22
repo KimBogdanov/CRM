@@ -24,7 +24,7 @@ public class StudentReadMapper implements Mapper<Student, StudentReadDto> {
                 .phone(student.getUserInfo().getPhone())
                 .email(student.getUserInfo().getEmail())
                 .avatar(student.getUserInfo().getAvatar())
-                .subject(student.getSubject())
+                .subject(student.getSubject().getName())
                 .balance(getBalance(student.getId()))
                 .build();
     }

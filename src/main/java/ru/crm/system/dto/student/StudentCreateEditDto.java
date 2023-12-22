@@ -1,7 +1,6 @@
 package ru.crm.system.dto.student;
 
 import lombok.Builder;
-import ru.crm.system.database.entity.Subject;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -23,5 +22,5 @@ public record StudentCreateEditDto(
         String avatar,
 
         @NotNull
-        Subject subject) {
+        String subject) {
 }

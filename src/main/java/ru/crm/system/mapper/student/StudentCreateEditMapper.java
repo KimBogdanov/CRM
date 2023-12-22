@@ -1,14 +1,20 @@
 package ru.crm.system.mapper.student;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Student;
+import ru.crm.system.database.entity.Subject;
 import ru.crm.system.database.entity.UserInfo;
 import ru.crm.system.database.entity.enums.Role;
+import ru.crm.system.database.repository.SubjectRepository;
 import ru.crm.system.dto.student.StudentCreateEditDto;
 import ru.crm.system.mapper.Mapper;
 
 @Component
+@RequiredArgsConstructor
 public class StudentCreateEditMapper implements Mapper<StudentCreateEditDto, Student> {
+
+    private final SubjectRepository subjectRepository;
 
     @Override
     public Student map(StudentCreateEditDto createDto) {
@@ -22,7 +28,11 @@ public class StudentCreateEditMapper implements Mapper<StudentCreateEditDto, Stu
 
         return Student.builder()
                 .userInfo(studentInfo)
-                .subject(createDto.subject())
+                .subject(getSubject(createDto.subject()))
                 .build();
+    }
+
+    private Subject getSubject(String subjectName) {
+        return subjectRepository.getSubjectByName(subjectName);
     }
 }
