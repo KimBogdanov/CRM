@@ -27,10 +27,10 @@ CREATE TABLE IF NOT EXISTS orders
 
 CREATE TABLE IF NOT EXISTS comment
 (
+    order_id INT REFERENCES orders (id),
     text     VARCHAR(256),
     added_at TIMESTAMP(0) NOT NULL,
-    order_id INT REFERENCES orders (id),
-    PRIMARY KEY (added_at, order_id)
+    PRIMARY KEY (order_id, text, added_at)
 );
 -- rollback DROP TABLE comment;
 
