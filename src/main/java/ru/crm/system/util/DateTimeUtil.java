@@ -1,4 +1,4 @@
-package ru.crm.system.uitl;
+package ru.crm.system.util;
 
 import lombok.experimental.UtilityClass;
 
