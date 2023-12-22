@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ru.crm.system.converter.MoneyConverter;
 import ru.crm.system.database.entity.enums.AbonementStatus;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -32,6 +35,9 @@ public class Abonement implements BaseEntity<Integer> {
     private Integer id;
 
     private Integer numberOfLessons;
+
+    @Convert(converter = MoneyConverter.class)
+    private BigDecimal balance;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AbonementType type;

@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS student
     last_name  VARCHAR(128),
     phone      VARCHAR(32)  NOT NULL,
     email      VARCHAR(128) UNIQUE,
-    password   VARCHAR(64)  NOT NULL,
+    password   VARCHAR(64),
     role       VARCHAR(32)  NOT NULL,
     subject_id INT REFERENCES subject (id),
     avatar     VARCHAR(128)
@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS abonement
 (
     id                INT AUTO_INCREMENT PRIMARY KEY,
     number_of_lessons INT     NOT NULL,
+    balance           NUMERIC(10, 2),
     type_id           INT REFERENCES abonement_type (id),
     begin             DATE,
     expire            DATE,
