@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.crm.system.database.entity.Admin;
 import ru.crm.system.database.entity.Comment;
 import ru.crm.system.database.entity.enums.ActionType;
 import ru.crm.system.database.entity.enums.OrderStatus;
@@ -49,24 +50,6 @@ public class OrderService {
                 .orElseThrow();
     }
 
-    @Transactional
-    public OrderReadDto changeStatus(Integer orderId,
-                                     OrderStatus status,
-                                     Integer adminId) {
-        return Optional.ofNullable(orderId)
-                .flatMap(orderRepository::findById)
-                .map(order -> {
-                    var logInfo = createLogInfo(order.getId());
-                    setLogInfo(adminId, status, logInfo);
-                    publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
-                    var maybeAdmin = adminRepository.findById(adminId);
-                    maybeAdmin.ifPresent(order::setAdmin);
-                    order.setStatus(status);
-                    var changedOrder = orderRepository.saveAndFlush(order);
-                    return orderReadMapper.map(changedOrder);
-                }).orElseThrow();
-    }
-
     public List<OrderReadDto> findAll() {
         return orderRepository.findAll().stream()
                 .map(orderReadMapper::map)
@@ -85,9 +68,12 @@ public class OrderService {
         return orderRepository.findById(orderId)
                 .map(order -> {
                     if (order.getStatus() != editDto.status()) {
-                        var logInfo = createLogInfo(orderId);
-                        setLogInfo(adminId, editDto.status(), logInfo);
+                        var logInfo = createChangeStatusLogInfo(adminId, orderId, editDto.status());
                         publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
+                    }
+                    if (order.getAdmin() == null) {
+                        adminRepository.findById(adminId)
+                                .ifPresent(order::setAdmin);
                     }
                     orderCreatedEditMapper.map(editDto, order);
                     return order;
@@ -96,6 +82,26 @@ public class OrderService {
                 .map(orderReadMapper::map);
     }
 
+    @Transactional
+    public Optional<OrderReadDto> addComment(Integer orderId,
+                                             Integer adminId,
+                                             String text) {
+        return adminRepository.findById(adminId)
+                .map(admin -> orderRepository.findById(orderId).
+                        map(order -> {
+                            if (order.getStatus().equals(OrderStatus.UNPROCESSED)) {
+                                order.setAdmin(admin);
+                            }
+                            order.addComment(createComment(text));
+                            var logInfo = createCommentLogInfo(orderId, text, admin);
+                            publisher.publishEvent(new EntityEvent<>(order, AccessType.UPDATE, logInfo));
+                            return orderReadMapper.map(order);
+                        })).flatMap(order -> order);
+    }
+
+    /**
+     * Метод для создания базового LogInfo для всех методов
+     */
     private LogInfoCreateDto createLogInfo(Integer orderId) {
         return LogInfoCreateDto.builder()
                 .createdAt(now().truncatedTo(SECONDS))
@@ -103,8 +109,23 @@ public class OrderService {
                 .build();
     }
 
-    private Comment createComment() {
-        return Comment.of("Новый заказ", now().truncatedTo(SECONDS));
+    /**
+     * Метод для создания Comment
+     */
+    private Comment createComment(String text) {
+        return Comment.of(text, now().truncatedTo(SECONDS));
+    }
+
+    /**
+     * Метод для создания LogInfo при изменении статуса заказа
+     */
+    private LogInfoCreateDto createChangeStatusLogInfo(Integer adminId, Integer orderId, OrderStatus status) {
+        var logInfo = createLogInfo(orderId);
+        var actionType = getActionType(status);
+        logInfo.setAction(actionType);
+        logInfo.setAdminId(adminId);
+        logInfo.setDescription("Статус заявки изменён на: " + status.name());
+        return logInfo;
     }
 
     private ActionType getActionType(OrderStatus status) {
@@ -117,10 +138,18 @@ public class OrderService {
         };
     }
 
-    private void setLogInfo(Integer adminId, OrderStatus status, LogInfoCreateDto logInfo) {
-        var actionType = getActionType(status);
-        logInfo.setAction(actionType);
-        logInfo.setAdminId(adminId);
-        logInfo.setDescription("Статус заявки изменён на: " + status.name());
+    /**
+     * Метод для создания LogInfo при добавлении комментария к заказу
+     */
+    private LogInfoCreateDto createCommentLogInfo(Integer orderId, String text, Admin admin) {
+        var logInfo = createLogInfo(orderId);
+        logInfo.setAdminId(admin.getId());
+        logInfo.setAction(ActionType.COMMENT);
+        logInfo.setDescription(String.format("Админ %s %s добавил комментарий к заявке №%d: %s",
+                admin.getUserInfo().getFirstName(),
+                admin.getUserInfo().getLastName(),
+                orderId,
+                text));
+        return logInfo;
     }
 }
