@@ -55,20 +55,21 @@ public class OrderRestController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("{id}/change-status")
-    @ResponseStatus(HttpStatus.CREATED)
-    public OrderReadDto changeStatus(@PathVariable("id") Integer orderId,
-                                     OrderStatus status,
-                                     Integer adminId) {
-        return orderService.changeStatus(orderId, status, adminId);
-    }
-
     @PatchMapping("/{id}/update")
     @ResponseStatus(HttpStatus.OK)
     public OrderReadDto update(@PathVariable("id") Integer orderId,
                                Integer adminId,
                                @RequestBody OrderCreateEditDto editDto) {
         return orderService.update(orderId, adminId, editDto)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/{id}/add-comment")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderReadDto addComment(@PathVariable("id") Integer orderId,
+                                   Integer adminId,
+                                   String text) {
+        return orderService.addComment(orderId, adminId, text)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
