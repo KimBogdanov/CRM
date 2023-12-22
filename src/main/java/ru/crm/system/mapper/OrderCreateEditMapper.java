@@ -2,13 +2,11 @@ package ru.crm.system.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.crm.system.database.entity.Admin;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.database.repository.AdminRepository;
 import ru.crm.system.dto.order.OrderCreateEditDto;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -25,7 +23,6 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
                 .phone(createDto.phone())
                 .createdAt(LocalDateTime.now())
                 .requestSource(createDto.requestSource())
-                .admin(getAdmin(createDto.adminId()))
                 .build();
     }
 
@@ -37,13 +34,6 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
         entity.setPhone(editDto.phone());
         entity.setCreatedAt(editDto.createdAt());
         entity.setRequestSource(editDto.requestSource());
-        entity.setAdmin(getAdmin(editDto.adminId()));
         return entity;
-    }
-
-    private Admin getAdmin(Integer id) {
-        return Optional.ofNullable(id)
-                .flatMap(adminRepository::findById)
-                .orElse(null);
     }
 }

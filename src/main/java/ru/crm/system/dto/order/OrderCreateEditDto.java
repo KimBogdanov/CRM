@@ -22,7 +22,5 @@ public record OrderCreateEditDto(OrderStatus status,
 
                                  String requestSource,
 
-                                 LocalDateTime createdAt,
-
-                                 Integer adminId) {
+                                 LocalDateTime createdAt) {
 }
