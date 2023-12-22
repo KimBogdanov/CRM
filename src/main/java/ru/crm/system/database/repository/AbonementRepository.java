@@ -14,5 +14,5 @@ public interface AbonementRepository extends JpaRepository<Abonement, Integer> {
             where a.status in ('ACTIVE', 'FROZEN')
             and a.student.id = (:studentId)
             """)
-    public BigDecimal getBalanceByStudent(Integer studentId);
+    BigDecimal getBalanceByStudent(Integer studentId);
 }
