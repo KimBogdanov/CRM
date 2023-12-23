@@ -35,8 +35,8 @@ public class AbonementService {
                                    Integer orderId) {
         return Optional.of(createDto)
                 .map(abonementCreateEditMapper::map)
+                .map(abonementRepository::save)
                 .map(abonement -> {
-                    abonementRepository.save(abonement);
                     var logInfo = createLogInfo(orderId);
                     logInfo.setAction(ActionType.SALE_OF_SUBSCRIPTION);
                     logInfo.setAdminId(adminId);
