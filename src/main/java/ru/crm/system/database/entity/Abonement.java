@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.crm.system.converter.MoneyConverter;
 import ru.crm.system.database.entity.enums.AbonementStatus;
+import ru.crm.system.database.entity.enums.AbonementType;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -39,7 +40,7 @@ public class Abonement implements BaseEntity<Integer> {
     @Convert(converter = MoneyConverter.class)
     private BigDecimal balance;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
     private AbonementType type;
 
     private LocalDate begin;

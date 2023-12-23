@@ -3,9 +3,7 @@ package ru.crm.system.mapper.abonement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Abonement;
-import ru.crm.system.database.entity.AbonementType;
 import ru.crm.system.database.entity.Student;
-import ru.crm.system.database.repository.AbonementTypeRepository;
 import ru.crm.system.database.repository.StudentRepository;
 import ru.crm.system.dto.abonement.AbonementCreatEditDto;
 import ru.crm.system.mapper.Mapper;
@@ -16,7 +14,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AbonementCreateEditMapper implements Mapper<AbonementCreatEditDto, Abonement> {
 
-    private final AbonementTypeRepository abonementTypeRepository;
     private final StudentRepository studentRepository;
 
     @Override
@@ -24,7 +21,7 @@ public class AbonementCreateEditMapper implements Mapper<AbonementCreatEditDto, 
         return Abonement.builder()
                 .numberOfLessons(creatDto.numberOfLessons())
                 .balance(creatDto.balance())
-                .type(getTypeByName(creatDto.type()))
+                .type(creatDto.type())
                 .begin(creatDto.begin())
                 .expire(creatDto.expire())
                 .status(creatDto.status())
@@ -32,11 +29,11 @@ public class AbonementCreateEditMapper implements Mapper<AbonementCreatEditDto, 
                 .build();
     }
 
-    private AbonementType getTypeByName(String name) {
-        return Optional.ofNullable(name)
-                .map(abonementTypeRepository::getTypeByName)
-                .orElse(null);
-    }
+//    private AbonementType getTypeByName(String name) {
+//        return Optional.ofNullable(name)
+//                .map(abonementTypeRepository::getTypeByName)
+//                .orElse(null);
+//    }
 
     private Student getStudent(Integer id) {
         return Optional.ofNullable(id)

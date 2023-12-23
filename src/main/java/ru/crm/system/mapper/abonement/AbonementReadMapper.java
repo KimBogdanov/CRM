@@ -14,7 +14,7 @@ public class AbonementReadMapper implements Mapper<Abonement, AbonementReadDto> 
                 .id(entity.getId())
                 .numberOfLessons(entity.getNumberOfLessons())
                 .balance(entity.getBalance())
-                .type(entity.getType().getName())
+                .type(entity.getType().name())
                 .begin(entity.getBegin())
                 .expire(entity.getExpire())
                 .status(entity.getStatus().name())
