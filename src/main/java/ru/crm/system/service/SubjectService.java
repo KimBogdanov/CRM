@@ -3,7 +3,7 @@ package ru.crm.system.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.crm.system.database.entity.Subject;
-import ru.crm.system.repository.SubjectRepository;
+import ru.crm.system.database.repository.SubjectRepository;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SubjectService {
+
     private final SubjectRepository subjectRepository;
 
     /**
