@@ -66,13 +66,6 @@ CREATE TABLE IF NOT EXISTS student
 );
 -- rollback DROP TABLE student;
 
-CREATE TABLE IF NOT EXISTS abonement_type
-(
-    id   INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(64) NOT NULL
-);
--- rollback DROP TABLE abonement_type;
-
 CREATE TABLE IF NOT EXISTS teacher_salary
 (
     id   INT AUTO_INCREMENT PRIMARY KEY,
@@ -86,7 +79,7 @@ CREATE TABLE IF NOT EXISTS abonement
     id                INT AUTO_INCREMENT PRIMARY KEY,
     number_of_lessons INT     NOT NULL,
     balance           NUMERIC(10, 2),
-    type_id           INT REFERENCES abonement_type (id),
+    type              VARCHAR(32),
     begin             DATE,
     expire            DATE,
     status            VARCHAR NOT NULL,
