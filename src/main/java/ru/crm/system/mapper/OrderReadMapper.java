@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.dto.order.OrderReadDto;
-import ru.crm.system.uitl.DateTimeUtil;
+import ru.crm.system.util.DateTimeUtil;
 
 @RequiredArgsConstructor
 @Component
