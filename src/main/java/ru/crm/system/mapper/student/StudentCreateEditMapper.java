@@ -10,6 +10,8 @@ import ru.crm.system.database.repository.SubjectRepository;
 import ru.crm.system.dto.student.StudentCreateEditDto;
 import ru.crm.system.mapper.Mapper;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class StudentCreateEditMapper implements Mapper<StudentCreateEditDto, Student> {
@@ -33,6 +35,8 @@ public class StudentCreateEditMapper implements Mapper<StudentCreateEditDto, Stu
     }
 
     private Subject getSubject(String subjectName) {
-        return subjectRepository.getSubjectByName(subjectName);
+        return Optional.of(subjectName)
+                .flatMap(subjectRepository::getSubjectByName)
+                .orElse(null);
     }
 }
