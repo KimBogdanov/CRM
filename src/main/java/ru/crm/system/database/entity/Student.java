@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "userInfo")
-@ToString(exclude = {"subject", "abonements", "lessons"})
+@ToString(exclude = {"subject", "abonements", "lessons", "logInfos"})
 @Entity
 public class Student implements BaseEntity<Integer> {
 
@@ -42,4 +42,8 @@ public class Student implements BaseEntity<Integer> {
     @Builder.Default
     @OneToMany(mappedBy = "student")
     private List<Lesson> lessons = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "student")
+    private List<LogInfo> logInfos = new ArrayList<>();
 }
