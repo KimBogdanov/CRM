@@ -51,28 +51,20 @@ public class StudentService {
     }
 
     /**
-     * Метод для создания базового LogInfo для всех методов
-     */
-    private LogInfoCreateDto createLogInfo(Integer studentId) {
-        return LogInfoCreateDto.builder()
-                .createdAt(now().truncatedTo(SECONDS))
-                .orderId(studentId)
-                .build();
-    }
-
-    /**
      * Метод для создания LogInfo при сохранении нового студента в базу данных
      * со статусом TRANSFER_TO_STUDENT из {@link ActionType} .
      */
     private LogInfoCreateDto createStudentLogInfo(Integer adminId, Integer oderId, Student student) {
-        var logInfo = createLogInfo(student.getId());
-        logInfo.setAdminId(adminId);
-        logInfo.setOrderId(oderId);
-        logInfo.setDescription(String.format("Добавлен новый ученик - %s %s из заказа №%d",
-                student.getUserInfo().getFirstName(),
-                student.getUserInfo().getLastName(),
-                oderId));
-        logInfo.setAction(ActionType.TRANSFER_TO_STUDENT);
-        return logInfo;
+        return LogInfoCreateDto.builder()
+                .action(ActionType.TRANSFER_TO_STUDENT)
+                .description(String.format("Добавлен новый ученик - %s %s из заказа №%d",
+                        student.getUserInfo().getFirstName(),
+                        student.getUserInfo().getLastName(),
+                        oderId))
+                .createdAt(now().truncatedTo(SECONDS))
+                .orderId(oderId)
+                .adminId(adminId)
+                .studentId(student.getId())
+                .build();
     }
 }
