@@ -18,6 +18,7 @@ public class LogInfoService {
     private final LogInfoRepository logInfoRepository;
     private final LogInfoCreateMapper logInfoCreateMapper;
 
+    @Transactional
     public Integer create(LogInfoCreateDto createDto) {
         return Optional.of(createDto)
                 .map(logInfoCreateMapper::map)
