@@ -44,4 +44,12 @@ public class LessonRestController {
         return lessonService.changeLessonStatus(lessonId, status)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
+
+    @PostMapping("/{id}/add-comment")
+    @ResponseStatus(HttpStatus.OK)
+    public LessonReadDto addComment(@PathVariable("id") Integer lessonId,
+                                    String text) {
+        return lessonService.addComment(lessonId, text)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
 }
