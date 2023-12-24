@@ -6,12 +6,13 @@ import ru.crm.system.database.entity.Admin;
 import ru.crm.system.database.entity.LogInfo;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.database.entity.Student;
+import ru.crm.system.database.entity.Teacher;
 import ru.crm.system.database.repository.AdminRepository;
 import ru.crm.system.database.repository.OrderRepository;
 import ru.crm.system.database.repository.StudentRepository;
+import ru.crm.system.database.repository.TeacherRepository;
 import ru.crm.system.dto.loginfo.LogInfoCreateDto;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Component
@@ -21,6 +22,7 @@ public class LogInfoCreateMapper implements Mapper<LogInfoCreateDto, LogInfo> {
     private final OrderRepository orderRepository;
     private final AdminRepository adminRepository;
     private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
 
     @Override
     public LogInfo map(LogInfoCreateDto createDto) {
@@ -31,6 +33,7 @@ public class LogInfoCreateMapper implements Mapper<LogInfoCreateDto, LogInfo> {
                 .order(getOrder(createDto.getOrderId()))
                 .admin(getAdmin(createDto.getAdminId()))
                 .student(getStudent(createDto.getStudentId()))
+                .teacher(getTeacher(createDto.getTeacherId()))
                 .build();
     }
 
@@ -49,6 +52,12 @@ public class LogInfoCreateMapper implements Mapper<LogInfoCreateDto, LogInfo> {
     private Student getStudent(Integer id) {
         return Optional.ofNullable(id)
                 .flatMap(studentRepository::findById)
-                .orElseThrow(() -> new EntityNotFoundException("Студент с номером " + id + " не найден в базе"));
+                .orElse(null);
+    }
+
+    private Teacher getTeacher(Integer id) {
+        return Optional.ofNullable(id)
+                .flatMap(teacherRepository::findById)
+                .orElse(null);
     }
 }

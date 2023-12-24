@@ -21,4 +21,5 @@ public final class LogInfoCreateDto {
     Integer orderId;
     Integer adminId;
     Integer studentId;
+    Integer teacherId;
 }
