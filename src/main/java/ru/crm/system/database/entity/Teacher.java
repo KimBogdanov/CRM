@@ -11,14 +11,12 @@ import ru.crm.system.database.entity.enums.TeacherStatus;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "userInfo")
-@ToString(exclude = {"lessons", "subjects"})
+@ToString(exclude = {"lessons", "subjects", "logInfos", "salaryLogs"})
 @Entity
 public class Teacher implements BaseEntity<Integer> {
 
@@ -38,8 +36,6 @@ public class Teacher implements BaseEntity<Integer> {
     private Integer id;
 
     private UserInfo userInfo;
-
-    private BigDecimal salaryPerHour;
 
     @Builder.Default
     @ManyToMany
@@ -56,6 +52,20 @@ public class Teacher implements BaseEntity<Integer> {
     @OneToMany(mappedBy = "teacher")
     private List<Lesson> lessons = new ArrayList<>();
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private TeacherSalary teacherSalary;
+    BigDecimal salaryPerHour;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "teacher")
+    private List<LogInfo> logInfos = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "teacher")
+    private List<SalaryLog> salaryLogs = new ArrayList<>();
+
+    private Double payRatio;
+
+    public void addSalaryLog(SalaryLog salaryLog) {
+        salaryLogs.add(salaryLog);
+        salaryLog.setTeacher(this);
+    }
 }

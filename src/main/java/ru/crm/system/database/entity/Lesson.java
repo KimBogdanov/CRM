@@ -6,9 +6,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ru.crm.system.converter.MoneyConverter;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.entity.enums.LessonType;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,13 +23,15 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(exclude = {"id", "student", "teacher"})
-@ToString(exclude = {"student", "teacher"})
+@ToString(exclude = {"student", "teacher", "subject", "comments"})
 @Entity
 public class Lesson implements BaseEntity<Integer> {
 
@@ -54,5 +60,15 @@ public class Lesson implements BaseEntity<Integer> {
 
     private String description;
 
+    @Convert(converter = MoneyConverter.class)
     private BigDecimal cost;
+
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "comment")
+    private List<Comment> comments = new ArrayList<>();
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
 }

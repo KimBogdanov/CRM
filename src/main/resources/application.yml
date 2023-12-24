@@ -1,0 +1,31 @@
+spring:
+  sql:
+    init:
+      mode: always
+  datasource:
+    url: jdbc:h2:file:./db/crm;AUTO_SERVER=TRUE
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  servlet:
+    multipart:
+      location: \src\main\resources\images\
+  h2:
+    console:
+      enabled: true
+my-app:
+  content:
+    no-image-available: \src\main\resources\images\NoImageAvailable.jpg
+server:
+  port: 8080

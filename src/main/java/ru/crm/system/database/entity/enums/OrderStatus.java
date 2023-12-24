@@ -4,10 +4,11 @@ package ru.crm.system.database.entity.enums;
  * статус заказа - удачен, неудачен и по какой причине
  */
 public enum OrderStatus {
-    NOT_PROCESSED,
-    SET_APPOINTMENT,
-    SUCCESSFUL_MEETING,
+    UNPROCESSED,
+    APPOINTMENT_SCHEDULED,
+    APPOINTMENT_COMPLETED,
     SUCCESSFULLY_COMPLETED,
-    REFUSED,
-    DEAD
+    POOR_LEAD,
+    REFUSED_TO_PURCHASE,
+    RESERVED
 }
