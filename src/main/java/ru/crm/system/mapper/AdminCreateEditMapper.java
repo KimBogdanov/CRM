@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Admin;
 import ru.crm.system.database.entity.UserInfo;
 import ru.crm.system.database.entity.enums.Role;
-import ru.crm.system.dto.AdminCreateEditDto;
+import ru.crm.system.dto.admin.AdminCreateEditDto;
 
 @Component
 public class AdminCreateEditMapper implements Mapper<AdminCreateEditDto, Admin> {

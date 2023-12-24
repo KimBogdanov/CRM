@@ -1,8 +1,7 @@
-package ru.crm.system.dto;
+package ru.crm.system.dto.admin;
 
 import lombok.Builder;
 import lombok.experimental.FieldNameConstants;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
@@ -13,6 +12,5 @@ public record AdminCreateEditDto(String firstName,
                                  String phone,
                                  String email,
                                  String rawPassword,
-                                 MultipartFile avatar,
                                  BigDecimal shiftRate) {
 }

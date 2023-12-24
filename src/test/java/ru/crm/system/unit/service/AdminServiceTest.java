@@ -6,13 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
 import ru.crm.system.database.entity.Admin;
 import ru.crm.system.database.entity.UserInfo;
 import ru.crm.system.database.entity.enums.Role;
 import ru.crm.system.database.repository.AdminRepository;
-import ru.crm.system.dto.AdminCreateEditDto;
-import ru.crm.system.dto.AdminReadDto;
+import ru.crm.system.dto.admin.AdminCreateEditDto;
+import ru.crm.system.dto.admin.AdminReadDto;
 import ru.crm.system.mapper.AdminCreateEditMapper;
 import ru.crm.system.mapper.AdminReadMapper;
 import ru.crm.system.service.AdminService;
@@ -87,7 +86,6 @@ public class AdminServiceTest {
                 .phone("8-924-775-58-58")
                 .email("admin@gmail.com")
                 .rawPassword("rawPassword")
-                .avatar(new MockMultipartFile("Admin.jpg", "Admin.jpg".getBytes()))
                 .shiftRate(BigDecimal.valueOf(3000))
                 .build();
     }

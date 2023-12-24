@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.crm.system.database.entity.LogInfo;
 import ru.crm.system.database.repository.LogInfoRepository;
-import ru.crm.system.dto.LogInfoCreateDto;
+import ru.crm.system.dto.loginfo.LogInfoCreateDto;
 import ru.crm.system.mapper.LogInfoCreateMapper;
 
 import java.util.Optional;

@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.database.entity.enums.OrderStatus;
 import ru.crm.system.database.repository.OrderRepository;
-import ru.crm.system.dto.OrderCreateEditDto;
+import ru.crm.system.dto.order.OrderCreateEditDto;
 import ru.crm.system.mapper.OrderCreateEditMapper;
 import ru.crm.system.service.OrderService;
 
@@ -56,7 +56,6 @@ class OrderServiceTest {
                 .phone("8-924-989-59-04")
                 .requestSource("Yandex")
                 .createdAt(LocalDateTime.of(2023, 12, 15, 10, 15))
-                .adminId(EXISTING_ADMIN_ID)
                 .build();
     }
 

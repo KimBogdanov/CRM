@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.crm.system.database.repository.AdminRepository;
-import ru.crm.system.dto.AdminCreateEditDto;
-import ru.crm.system.dto.AdminReadDto;
+import ru.crm.system.dto.admin.AdminCreateEditDto;
+import ru.crm.system.dto.admin.AdminReadDto;
 import ru.crm.system.mapper.AdminCreateEditMapper;
 import ru.crm.system.mapper.AdminReadMapper;
 
@@ -24,10 +24,7 @@ public class AdminService {
     @Transactional
     public AdminReadDto create(AdminCreateEditDto createDto) {
         return Optional.of(createDto)
-                .map(adminCreateDto -> {
-                    applicationContentService.uploadImage(adminCreateDto.avatar());
-                    return adminCreateEditMapper.map(adminCreateDto);
-                })
+                .map(adminCreateEditMapper::map)
                 .map(adminRepository::save)
                 .map(adminReadMapper::map)
                 .orElseThrow();
