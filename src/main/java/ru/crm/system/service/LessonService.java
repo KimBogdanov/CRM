@@ -19,7 +19,6 @@ import ru.crm.system.listener.entity.EntityEvent;
 import ru.crm.system.mapper.lesson.LessonCreateEditMapper;
 import ru.crm.system.mapper.lesson.LessonReadMapper;
 
-import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -68,7 +67,7 @@ public class LessonService {
     }
 
     @Transactional
-    public LessonReadDto changeLessonStatus(Integer lessonId,
+    public Optional<LessonReadDto> changeLessonStatus(Integer lessonId,
                                             LessonStatus status) {
         return lessonRepository.findById(lessonId)
                 .map(lesson -> {
@@ -82,8 +81,7 @@ public class LessonService {
                     }
                     return lesson;
                 })
-                .map(lessonReadMapper::map)
-                .orElseThrow(() -> new EntityNotFoundException("Урок с номером " + lessonId + " не найден в базе данных"));
+                .map(lessonReadMapper::map);
     }
 
     /**
