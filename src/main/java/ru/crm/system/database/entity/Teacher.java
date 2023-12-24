@@ -27,7 +27,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "userInfo")
-@ToString(exclude = {"lessons", "subjects"})
+@ToString(exclude = {"lessons", "subjects", "logInfos", "salaryLogs"})
 @Entity
 public class Teacher implements BaseEntity<Integer> {
 
@@ -53,4 +53,19 @@ public class Teacher implements BaseEntity<Integer> {
     private List<Lesson> lessons = new ArrayList<>();
 
     BigDecimal salaryPerHour;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "teacher")
+    private List<LogInfo> logInfos = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "teacher")
+    private List<SalaryLog> salaryLogs = new ArrayList<>();
+
+    private Double payRatio;
+
+    public void addSalaryLog(SalaryLog salaryLog) {
+        salaryLogs.add(salaryLog);
+        salaryLog.setTeacher(this);
+    }
 }
