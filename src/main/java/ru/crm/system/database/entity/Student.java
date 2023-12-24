@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "userInfo")
-@ToString(exclude = {"subject", "abonements", "lessons", "logInfos"})
+@ToString(exclude = {"subject", "lessons", "logInfos"})
 @Entity
 public class Student implements BaseEntity<Integer> {
 
@@ -35,9 +36,8 @@ public class Student implements BaseEntity<Integer> {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Subject subject;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "student")
-    private List<Abonement> abonements = new ArrayList<>();
+    @OneToOne(mappedBy = "student")
+    private Abonement abonement;
 
     @Builder.Default
     @OneToMany(mappedBy = "student")

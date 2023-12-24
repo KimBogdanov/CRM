@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 public interface AbonementRepository extends JpaRepository<Abonement, Integer> {
 
     @Query("""
-            select sum(a.balance)
+            select a.balance
             from Abonement a
             where a.status in ('ACTIVE', 'FROZEN')
-            and a.student.id = (:studentId)
+            and a.student.id = :studentId
             """)
     BigDecimal getBalanceByStudent(Integer studentId);
 }
