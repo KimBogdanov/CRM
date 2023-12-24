@@ -3,7 +3,7 @@ package ru.crm.system.listener.entity;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 import ru.crm.system.database.entity.BaseEntity;
-import ru.crm.system.dto.LogInfoCreateDto;
+import ru.crm.system.dto.loginfo.LogInfoCreateDto;
 
 @Getter
 public class EntityEvent<T extends BaseEntity<Integer>> extends ApplicationEvent {

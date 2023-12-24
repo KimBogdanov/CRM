@@ -4,8 +4,8 @@ spring:
       mode: always
   datasource:
     url: jdbc:h2:file:./db/crm;AUTO_SERVER=TRUE
-    username:
-    password:
+    username: sa
+    password: password
     driver-class-name: org.h2.Driver
   jpa:
     show-sql: true

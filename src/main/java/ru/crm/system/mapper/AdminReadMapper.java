@@ -2,7 +2,7 @@ package ru.crm.system.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Admin;
-import ru.crm.system.dto.AdminReadDto;
+import ru.crm.system.dto.admin.AdminReadDto;
 
 @Component
 public class AdminReadMapper implements Mapper<Admin, AdminReadDto> {

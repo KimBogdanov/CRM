@@ -41,4 +41,10 @@ public class LogInfo implements BaseEntity<Integer> {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Order order;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Student student;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Teacher teacher;
 }

@@ -4,5 +4,5 @@ public enum AccessType {
     CREATE,
     UPDATE,
     DELETE,
-    CHANE_STATUS
+    CHANGE_STATUS
 }

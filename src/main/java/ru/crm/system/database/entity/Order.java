@@ -30,7 +30,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = {"phone", "createdAt"})
-@ToString(exclude = {"id", "admin"})
+@ToString(exclude = {"id", "admin", "logInfos", "comments"})
 @Table(name = "orders")
 @Entity
 public class Order implements BaseEntity<Integer> {
@@ -66,4 +66,8 @@ public class Order implements BaseEntity<Integer> {
     @ElementCollection
     @CollectionTable(name = "comment")
     private List<Comment> comments = new ArrayList<>();
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
 }
