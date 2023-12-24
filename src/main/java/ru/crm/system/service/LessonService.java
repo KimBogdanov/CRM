@@ -59,13 +59,12 @@ public class LessonService {
     }
 
     @Transactional
-    public LessonReadDto update(Integer lessonId,
-                                LessonCreateEditDto editDto) {
+    public Optional<LessonReadDto> update(Integer lessonId,
+                                          LessonCreateEditDto editDto) {
         return lessonRepository.findById(lessonId)
                 .map(lesson -> lessonCreateEditMapper.map(editDto, lesson))
                 .map(lessonRepository::saveAndFlush)
-                .map(lessonReadMapper::map)
-                .orElseThrow();
+                .map(lessonReadMapper::map);
     }
 
     @Transactional
