@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(exclude = {"id", "student", "teacher"})
-@ToString(exclude = {"student", "teacher"})
+@ToString(exclude = {"student", "teacher", "subject"})
 @Entity
 public class Lesson implements BaseEntity<Integer> {
 
