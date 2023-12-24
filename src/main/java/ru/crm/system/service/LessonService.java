@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.crm.system.database.entity.Comment;
 import ru.crm.system.database.entity.Lesson;
 import ru.crm.system.database.entity.SalaryLog;
 import ru.crm.system.database.entity.enums.ActionType;
@@ -68,7 +69,7 @@ public class LessonService {
 
     @Transactional
     public Optional<LessonReadDto> changeLessonStatus(Integer lessonId,
-                                            LessonStatus status) {
+                                                      LessonStatus status) {
         return lessonRepository.findById(lessonId)
                 .map(lesson -> {
                     lessonRepository.changeLessonStatus(status);
@@ -79,6 +80,19 @@ public class LessonService {
                         case CANCELED_BY_TEACHER_FAULT -> jobInCaseLessonCanceledByTeacherFault(lesson);
                         case CANCELED -> jobInCaseLessonCanceled(lesson);
                     }
+                    return lesson;
+                })
+                .map(lessonReadMapper::map);
+    }
+
+    @Transactional
+    public Optional<LessonReadDto> addComment(Integer lessonId,
+                                              String text) {
+        return lessonRepository.findById(lessonId)
+                .map(lesson -> {
+                    lesson.addComment(createComment(text));
+                    var logInfo = createCommentLogInfo(lesson, text);
+                    publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, logInfo));
                     return lesson;
                 })
                 .map(lessonReadMapper::map);
@@ -282,5 +296,26 @@ public class LessonService {
                 .build();
         lesson.getTeacher().addSalaryLog(teacherSalaryLog);
         salaryLogRepository.saveAndFlush(teacherSalaryLog);
+    }
+
+    private Comment createComment(String text) {
+        return Comment.of(text, now().truncatedTo(SECONDS));
+    }
+
+    /**
+     * Метод для создания LogInfo при добавлении комментария к уроку
+     */
+    private LogInfoCreateDto createCommentLogInfo(Lesson lesson, String text) {
+        return LogInfoCreateDto.builder()
+                .action(ActionType.COMMENT)
+                .description(String.format("Учитель %s %s добавил комментарий к уроку №%d: %s.",
+                        lesson.getTeacher().getUserInfo().getFirstName(),
+                        lesson.getTeacher().getUserInfo().getLastName(),
+                        lesson.getId(),
+                        text))
+                .createdAt(now().truncatedTo(SECONDS))
+                .studentId(lesson.getStudent().getId())
+                .teacherId(lesson.getTeacher().getId())
+                .build();
     }
 }

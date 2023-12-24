@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS comment
     lesson_id INT REFERENCES lesson (id),
     text      VARCHAR(256),
     added_at  TIMESTAMP(0) NOT NULL,
-    PRIMARY KEY (order_id, text, added_at)
+    PRIMARY KEY (text, added_at)
 );
 -- rollback DROP TABLE comment;
 
