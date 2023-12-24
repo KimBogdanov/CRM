@@ -3,6 +3,7 @@ package ru.crm.system.http.rest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,13 @@ import java.math.BigDecimal;
 public class AbonementRestController {
 
     private final AbonementService abonementService;
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public AbonementReadDto findById(@PathVariable Integer id) {
+        return abonementService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
