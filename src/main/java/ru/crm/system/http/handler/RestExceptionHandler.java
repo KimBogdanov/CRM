@@ -18,6 +18,11 @@ public class RestExceptionHandler {
         return createErrorResponse(exception, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<RestErrorResponse> handleException(NotFoundException exception) {
+        return createErrorResponse(exception, HttpStatus.MULTI_STATUS);
+    }
+
     private ResponseEntity<RestErrorResponse> createErrorResponse(Exception exception, HttpStatus status) {
         return new ResponseEntity<>(RestErrorResponse.builder()
                 .messages(Collections.singletonList(exception.getMessage()))
