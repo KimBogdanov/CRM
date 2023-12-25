@@ -57,6 +57,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>crm</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -68,6 +69,19 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>crm-codereview</directory>
+				<excludes>
+					<exclude>./build/**/</exclude>
+					<exclude>./node_modules/**/</exclude>
+					<exclude>./public/**/</exclude>
+					<exclude>./src/**/</exclude>
+					<exclude>./package.json</exclude>
+					<exclude>./package-lock.json</exclude>
+				</excludes>
+			</resource>
+		</resources>
 	</build>
 
 </project>
