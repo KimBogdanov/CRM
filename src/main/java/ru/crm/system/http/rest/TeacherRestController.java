@@ -13,6 +13,8 @@ import ru.crm.system.dto.teacher.TeacherCreateEditDto;
 import ru.crm.system.dto.teacher.TeacherReadDto;
 import ru.crm.system.service.TeacherService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/teachers")
 @RequiredArgsConstructor
@@ -31,5 +33,11 @@ public class TeacherRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public TeacherReadDto create(TeacherCreateEditDto createDto) {
         return teacherService.create(createDto);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<TeacherReadDto> findAll() {
+        return teacherService.findAll();
     }
 }
