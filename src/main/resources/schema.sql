@@ -67,7 +67,6 @@ CREATE TABLE IF NOT EXISTS teacher
     role            VARCHAR(32)  NOT NULL,
     avatar          VARCHAR(128),
     salary_per_hour NUMERIC(10, 2),
-    subject_id      INT REFERENCES subject (id),
     status          VARCHAR(32)  NOT NULL,
     pay_ratio       DOUBLE
 );
@@ -117,8 +116,8 @@ CREATE TABLE IF NOT EXISTS lesson
 
 CREATE TABLE IF NOT EXISTS teachers_subject
 (
-    teacher_id INT REFERENCES teacher (id),
-    subject_id INT REFERENCES subject (id),
+    teacher_id INT REFERENCES teacher (id) ON DELETE CASCADE,
+    subject_id INT REFERENCES subject (id) ON DELETE CASCADE,
     PRIMARY KEY (teacher_id, subject_id)
 );
 --rollback DROP TABLE teachers_subject;
