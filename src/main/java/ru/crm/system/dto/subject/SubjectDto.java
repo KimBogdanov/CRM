@@ -1,4 +1,4 @@
-package ru.crm.system.dto;
+package ru.crm.system.dto.subject;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
