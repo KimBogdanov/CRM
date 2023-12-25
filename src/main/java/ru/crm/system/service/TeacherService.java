@@ -9,6 +9,7 @@ import ru.crm.system.dto.teacher.TeacherReadDto;
 import ru.crm.system.mapper.teacher.TeacherCreateEditMapper;
 import ru.crm.system.mapper.teacher.TeacherReadMapper;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,5 +33,11 @@ public class TeacherService {
                 .map(teacherRepository::save)
                 .map(teacherReadMapper::map)
                 .orElseThrow(RuntimeException::new);
+    }
+
+    public List<TeacherReadDto> findAll() {
+        return teacherRepository.findAll().stream()
+                .map(teacherReadMapper::map)
+                .toList();
     }
 }
