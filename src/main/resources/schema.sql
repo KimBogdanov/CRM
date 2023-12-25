@@ -35,6 +35,17 @@ CREATE TABLE IF NOT EXISTS comment
     );
 -- rollback DROP TABLE comment;
 
+CREATE TABLE IF NOT EXISTS task
+(
+    task_id           LONG AUTO_INCREMENT PRIMARY KEY,
+    object_type       VARCHAR(64),
+    object_id         LONG,
+    description       VARCHAR(64) NOT NULL,
+    created_date_time TIMESTAMP   NOT NULL,
+    end_date_time     TIMESTAMP   NOT NULL,
+    task_Type         VARCHAR(64) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS subject
 (
     id   INT AUTO_INCREMENT PRIMARY KEY,

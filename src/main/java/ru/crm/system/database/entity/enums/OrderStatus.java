@@ -1,5 +1,8 @@
 package ru.crm.system.database.entity.enums;
 
+/**
+ * статус заказа - удачен, неудачен и по какой причине
+ */
 public enum OrderStatus {
     UNPROCESSED,
     APPOINTMENT_SCHEDULED,
