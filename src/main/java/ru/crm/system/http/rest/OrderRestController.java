@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import ru.crm.system.database.entity.enums.OrderStatus;
 import ru.crm.system.dto.order.OrderCreateEditDto;
 import ru.crm.system.dto.order.OrderReadDto;
+import ru.crm.system.exception.NotFoundException;
 import ru.crm.system.service.OrderService;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class OrderRestController {
     @ResponseStatus(HttpStatus.OK)
     public OrderReadDto findById(@PathVariable("id") Integer id) {
         return orderService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(String.format("Заказ с номером %d не найден.", id)));
     }
 
     @PatchMapping("/{id}/update")
@@ -61,7 +61,7 @@ public class OrderRestController {
                                Integer adminId,
                                @RequestBody OrderCreateEditDto editDto) {
         return orderService.update(orderId, adminId, editDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(String.format("Заказ с номером %d не найден.", orderId)));
     }
 
     @PostMapping("/{id}/add-comment")
@@ -70,6 +70,6 @@ public class OrderRestController {
                                    Integer adminId,
                                    String text) {
         return orderService.addComment(orderId, adminId, text)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(String.format("Заказ с номером %d не найден.", orderId)));
     }
 }

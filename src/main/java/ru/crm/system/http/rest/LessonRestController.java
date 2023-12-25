@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.dto.lesson.LessonCreateEditDto;
 import ru.crm.system.dto.lesson.LessonReadDto;
+import ru.crm.system.exception.NotFoundException;
 import ru.crm.system.service.LessonService;
 
 @RestController
@@ -27,7 +27,7 @@ public class LessonRestController {
     @ResponseStatus(HttpStatus.OK)
     public LessonReadDto findById(@PathVariable Integer id) {
         return lessonService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(String.format("Урок с номером %d не найден.", id)));
     }
 
     @PostMapping("/create")
@@ -42,7 +42,7 @@ public class LessonRestController {
     public LessonReadDto update(@PathVariable("id") Integer lessonId,
                                 @RequestBody LessonCreateEditDto updateDto) {
         return lessonService.update(lessonId, updateDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(String.format("Урок с номером %d не найден.", lessonId)));
     }
 
     @PatchMapping("/{id}/change-status")
@@ -50,7 +50,7 @@ public class LessonRestController {
     public LessonReadDto changeLessonStatus(@PathVariable("id") Integer lessonId,
                                             LessonStatus status) {
         return lessonService.changeLessonStatus(lessonId, status)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(String.format("Урок с номером %d не найден.", lessonId)));
     }
 
     @PostMapping("/{id}/add-comment")
@@ -58,6 +58,6 @@ public class LessonRestController {
     public LessonReadDto addComment(@PathVariable("id") Integer lessonId,
                                     String text) {
         return lessonService.addComment(lessonId, text)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(String.format("Урок с номером %d не найден.", lessonId)));
     }
 }

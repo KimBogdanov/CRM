@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import ru.crm.system.dto.teacher.TeacherCreateEditDto;
 import ru.crm.system.dto.teacher.TeacherReadDto;
+import ru.crm.system.exception.NotFoundException;
 import ru.crm.system.service.TeacherService;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class TeacherRestController {
     @ResponseStatus(HttpStatus.OK)
     public TeacherReadDto findById(@PathVariable Integer id) {
         return teacherService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(String.format("Учитель с номером %d не найден.", id)));
     }
 
     @PostMapping("/create")

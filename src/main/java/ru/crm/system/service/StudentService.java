@@ -17,7 +17,6 @@ import ru.crm.system.listener.entity.EntityEvent;
 import ru.crm.system.mapper.student.StudentCreateEditMapper;
 import ru.crm.system.mapper.student.StudentReadMapper;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
@@ -51,10 +50,9 @@ public class StudentService {
                 .orElseThrow();
     }
 
-    public StudentReadDto findById(Integer id) {
+    public Optional<StudentReadDto> findById(Integer id) {
         return studentRepository.findById(id)
-                .map(studentReadMapper::map)
-                .orElseThrow(EntityNotFoundException::new);
+                .map(studentReadMapper::map);
     }
 
     /**
