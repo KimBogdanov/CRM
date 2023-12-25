@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.crm.system.database.entity.Subject;
-import ru.crm.system.dto.SubjectDto;
-import ru.crm.system.dto.SubjectSaveDto;
+import ru.crm.system.dto.subject.SubjectDto;
+import ru.crm.system.dto.subject.SubjectSaveDto;
 import ru.crm.system.mapper.SubjectMapper;
 import ru.crm.system.service.SubjectService;
 
@@ -31,7 +31,8 @@ public class SubjectApi {
     @GetMapping("{id}")
     public SubjectDto getById(@PathVariable Integer id) {
         Subject subject = subjectService.getById(id);
-        return subjectMapper.toDto(subject);
+        SubjectDto subjectDto = subjectMapper.toDto(subject);
+        return subjectDto;
     }
 
     /**
