@@ -25,16 +25,6 @@ CREATE TABLE IF NOT EXISTS orders
 );
 -- rollback DROP TABLE orders;
 
-CREATE TABLE IF NOT EXISTS comment
-(
-    order_id  INT REFERENCES orders (id),
-    lesson_id INT REFERENCES lesson (id),
-    text      VARCHAR(256),
-    added_at  TIMESTAMP(0) NOT NULL,
-    PRIMARY KEY (text, added_at)
-);
--- rollback DROP TABLE comment;
-
 CREATE TABLE IF NOT EXISTS subject
 (
     id   INT AUTO_INCREMENT PRIMARY KEY,
@@ -113,6 +103,16 @@ CREATE TABLE IF NOT EXISTS lesson
     cost        NUMERIC(10, 2)
 );
 --rollback DROP TABLE lesson;
+
+CREATE TABLE IF NOT EXISTS comment
+(
+    order_id  INT REFERENCES orders (id),
+    lesson_id INT REFERENCES lesson (id),
+    text      VARCHAR(256),
+    added_at  TIMESTAMP(0) NOT NULL,
+    PRIMARY KEY (text, added_at)
+);
+-- rollback DROP TABLE comment;
 
 CREATE TABLE IF NOT EXISTS teachers_subject
 (

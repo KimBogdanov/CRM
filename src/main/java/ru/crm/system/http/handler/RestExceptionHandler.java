@@ -8,6 +8,7 @@ import ru.crm.system.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 
 @RestControllerAdvice(basePackages = "ru.crm.system.http")
 public class RestExceptionHandler {
@@ -19,11 +20,10 @@ public class RestExceptionHandler {
 
     private ResponseEntity<RestErrorResponse> createErrorResponse(Exception exception, HttpStatus status) {
         return new ResponseEntity<>(RestErrorResponse.builder()
-                .message(exception.getMessage())
+                .messages(Collections.singletonList(exception.getMessage()))
                 .status(status)
                 .thrownAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                 .build(),
                 status);
     }
-
 }
