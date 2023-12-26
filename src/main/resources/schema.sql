@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS admin
     role       VARCHAR(32)   NOT NULL,
     shift_rate NUMERIC(8, 2) NOT NULL,
     avatar     VARCHAR(128)
-    );
+);
 -- rollback DROP TABLE admin
 
 CREATE TABLE IF NOT EXISTS orders
@@ -21,36 +21,15 @@ CREATE TABLE IF NOT EXISTS orders
     phone          VARCHAR(32)  NOT NULL,
     request_source VARCHAR(512),
     created_at     TIMESTAMP(0) NOT NULL,
-    admin_id       INT
-    );
--- rollback DROP TABLE orders;
-
-CREATE TABLE IF NOT EXISTS comment
-(
-    order_id  INT,
-    lesson_id INT,
-    text      VARCHAR(256),
-    added_at  TIMESTAMP(0) NOT NULL,
-    PRIMARY KEY (text, added_at)
-    );
--- rollback DROP TABLE comment;
-
-CREATE TABLE IF NOT EXISTS task
-(
-    task_id           LONG AUTO_INCREMENT PRIMARY KEY,
-    object_type       VARCHAR(64),
-    object_id         LONG,
-    description       VARCHAR(64) NOT NULL,
-    created_date_time TIMESTAMP   NOT NULL,
-    end_date_time     TIMESTAMP   NOT NULL,
-    task_Type         VARCHAR(64) NOT NULL
+    admin_id       INT REFERENCES admin (id)
 );
+-- rollback DROP TABLE orders;
 
 CREATE TABLE IF NOT EXISTS subject
 (
     id   INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(64) NOT NULL UNIQUE
-    );
+);
 --rollback DROP TABLE log_info;
 
 CREATE TABLE IF NOT EXISTS student
@@ -61,10 +40,10 @@ CREATE TABLE IF NOT EXISTS student
     phone      VARCHAR(32)  NOT NULL,
     email      VARCHAR(128) UNIQUE,
     password   VARCHAR(64),
-    avatar     VARCHAR(128),
     role       VARCHAR(32)  NOT NULL,
-    subject_id INT
-    );
+    subject_id INT REFERENCES subject (id),
+    avatar     VARCHAR(128)
+);
 -- rollback DROP TABLE subject;
 
 CREATE TABLE IF NOT EXISTS teacher
@@ -78,11 +57,11 @@ CREATE TABLE IF NOT EXISTS teacher
     role            VARCHAR(32)  NOT NULL,
     avatar          VARCHAR(128),
     salary_per_hour NUMERIC(10, 2),
-    subject_id      INT,
     status          VARCHAR(32)  NOT NULL,
     pay_ratio       DOUBLE
-    );
+);
 -- rollback DROP TABLE teacher;
+
 
 CREATE TABLE IF NOT EXISTS log_info
 (
@@ -90,11 +69,11 @@ CREATE TABLE IF NOT EXISTS log_info
     action_type VARCHAR(256),
     description VARCHAR(256),
     created_at  TIMESTAMP(0) NOT NULL,
-    admin_id    INT,
-    order_id    INT,
-    student_id  INT,
-    teacher_id  INT
-    );
+    admin_id    INT REFERENCES admin (id),
+    order_id    INT REFERENCES orders (id),
+    student_id  INT REFERENCES student (id),
+    teacher_id  INT REFERENCES teacher (id)
+);
 -- rollback DROP TABLE student;
 
 CREATE TABLE IF NOT EXISTS abonement
@@ -106,31 +85,41 @@ CREATE TABLE IF NOT EXISTS abonement
     begin             DATE,
     expire            DATE,
     status            VARCHAR NOT NULL,
-    student_id        INT
-    );
+    student_id        INT REFERENCES student (id)
+);
 -- rollback DROP TABLE abonement;
 
 CREATE TABLE IF NOT EXISTS lesson
 (
     id          INT AUTO_INCREMENT PRIMARY KEY,
-    student_id  INT          NOT NULL,
-    teacher_id  INT          NOT NULL,
+    student_id  INT          NOT NULL REFERENCES student (id),
+    teacher_id  INT          NOT NULL REFERENCES teacher (id),
     date_time   TIMESTAMP(0) NOT NULL,
     duration    INT          NOT NULL,
-    subject_id  INT          NOT NULL,
+    subject_id  INT          NOT NULL REFERENCES subject (id),
     status      VARCHAR(64)  NOT NULL,
     type        VARCHAR(64),
     description VARCHAR(128),
     cost        NUMERIC(10, 2)
-    );
+);
 --rollback DROP TABLE lesson;
+
+CREATE TABLE IF NOT EXISTS comment
+(
+    order_id  INT REFERENCES orders (id),
+    lesson_id INT REFERENCES lesson (id),
+    text      VARCHAR(256),
+    added_at  TIMESTAMP(0) NOT NULL,
+    PRIMARY KEY (text, added_at)
+);
+-- rollback DROP TABLE comment;
 
 CREATE TABLE IF NOT EXISTS teachers_subject
 (
-    teacher_id INT,
-    subject_id INT,
+    teacher_id INT REFERENCES teacher (id) ON DELETE CASCADE,
+    subject_id INT REFERENCES subject (id) ON DELETE CASCADE,
     PRIMARY KEY (teacher_id, subject_id)
-    );
+);
 --rollback DROP TABLE teachers_subject;
 
 CREATE TABLE IF NOT EXISTS salary_log
@@ -138,35 +127,18 @@ CREATE TABLE IF NOT EXISTS salary_log
     id         INT AUTO_INCREMENT PRIMARY KEY,
     payment    NUMERIC(10, 2),
     added_at   TIMESTAMP(0),
-    teacher_id INT,
-    admin_id   INT
-    );
+    teacher_id INT REFERENCES teacher (id),
+    admin_id   INT REFERENCES admin (id)
+);
 --rollback DROP TABLE salary_log;
-
+CREATE TABLE IF NOT EXISTS task
+(
+    id                LONG AUTO_INCREMENT PRIMARY KEY,
+    object_type       VARCHAR(64),
+    object_id         LONG,
+    description       VARCHAR(64) NOT NULL,
+    created_date_time TIMESTAMP   NOT NULL,
+    end_date_time     TIMESTAMP   NOT NULL,
+    task_Type         VARCHAR(64) NOT NULL
+);
 -- Добавляем внешние ключи
-
-ALTER TABLE orders ADD CONSTRAINT fk_orders_admin FOREIGN KEY (admin_id) REFERENCES admin (id);
-
-ALTER TABLE comment ADD CONSTRAINT fk_comment_order FOREIGN KEY (order_id) REFERENCES orders (id);
-ALTER TABLE comment ADD CONSTRAINT fk_comment_lesson FOREIGN KEY (lesson_id) REFERENCES lesson (id);
-
-ALTER TABLE student ADD CONSTRAINT fk_student_subject FOREIGN KEY (subject_id) REFERENCES subject (id);
-
-ALTER TABLE teacher ADD CONSTRAINT fk_teacher_subject FOREIGN KEY (subject_id) REFERENCES subject (id);
-
-ALTER TABLE log_info ADD CONSTRAINT fk_log_info_admin FOREIGN KEY (admin_id) REFERENCES admin (id);
-ALTER TABLE log_info ADD CONSTRAINT fk_log_info_order FOREIGN KEY (order_id) REFERENCES orders (id);
-ALTER TABLE log_info ADD CONSTRAINT fk_log_info_student FOREIGN KEY (student_id) REFERENCES student (id);
-ALTER TABLE log_info ADD CONSTRAINT fk_log_info_teacher FOREIGN KEY (teacher_id) REFERENCES teacher (id);
-
-ALTER TABLE abonement ADD CONSTRAINT fk_abonement_student FOREIGN KEY (student_id) REFERENCES student (id);
-
-ALTER TABLE lesson ADD CONSTRAINT fk_lesson_student FOREIGN KEY (student_id) REFERENCES student (id);
-ALTER TABLE lesson ADD CONSTRAINT fk_lesson_teacher FOREIGN KEY (teacher_id) REFERENCES teacher (id);
-ALTER TABLE lesson ADD CONSTRAINT fk_lesson_subject FOREIGN KEY (subject_id) REFERENCES subject (id);
-
-ALTER TABLE teachers_subject ADD CONSTRAINT fk_teachers_subject_teacher FOREIGN KEY (teacher_id) REFERENCES teacher (id);
-ALTER TABLE teachers_subject ADD CONSTRAINT fk_teachers_subject_subject FOREIGN KEY (subject_id) REFERENCES subject (id);
-
-ALTER TABLE salary_log ADD CONSTRAINT fk_salary_log_teacher FOREIGN KEY (teacher_id) REFERENCES teacher (id);
-ALTER TABLE salary_log ADD CONSTRAINT fk_salary_log_admin FOREIGN KEY (admin_id) REFERENCES admin (id);

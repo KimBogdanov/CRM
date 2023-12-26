@@ -31,6 +31,11 @@ public class AbonementService {
     private final AbonementReadMapper abonementReadMapper;
     private final ApplicationEventPublisher publisher;
 
+    public Optional<AbonementReadDto> findById(Integer id) {
+        return abonementRepository.findById(id)
+                .map(abonementReadMapper::map);
+    }
+
     @Transactional
     public AbonementReadDto create(AbonementCreatEditDto createDto,
                                    Integer adminId,

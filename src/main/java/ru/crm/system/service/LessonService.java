@@ -98,6 +98,11 @@ public class LessonService {
                 .map(lessonReadMapper::map);
     }
 
+    public Optional<LessonReadDto> findById(Integer id) {
+        return lessonRepository.findById(id)
+                .map(lessonReadMapper::map);
+    }
+
     /**
      * Метод для создания LogInfo при сохранении нового урока в базу данных
      * со статусом ATTENDING_A_LESSON из {@link ActionType} .

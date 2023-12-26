@@ -50,6 +50,11 @@ public class StudentService {
                 .orElseThrow();
     }
 
+    public Optional<StudentReadDto> findById(Integer id) {
+        return studentRepository.findById(id)
+                .map(studentReadMapper::map);
+    }
+
     /**
      * Метод для создания LogInfo при сохранении нового студента в базу данных
      * со статусом TRANSFER_TO_STUDENT из {@link ActionType} .

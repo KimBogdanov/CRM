@@ -14,7 +14,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,7 +58,7 @@ public class Order implements BaseEntity<Integer> {
     @OneToMany(mappedBy = "order")
     private List<LogInfo> logInfos = new ArrayList<>();
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne
     private Admin admin;
 
     @Builder.Default

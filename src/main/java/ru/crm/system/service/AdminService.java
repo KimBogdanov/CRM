@@ -19,7 +19,6 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final AdminCreateEditMapper adminCreateEditMapper;
     private final AdminReadMapper adminReadMapper;
-    private final ApplicationContentService applicationContentService;
 
     @Transactional
     public AdminReadDto create(AdminCreateEditDto createDto) {

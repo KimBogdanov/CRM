@@ -3,7 +3,6 @@ package ru.crm.system.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Order;
-import ru.crm.system.database.repository.AdminRepository;
 import ru.crm.system.dto.order.OrderCreateEditDto;
 
 import java.time.LocalDateTime;
@@ -11,8 +10,6 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> {
-
-    private final AdminRepository adminRepository;
 
     @Override
     public Order map(OrderCreateEditDto createDto) {
