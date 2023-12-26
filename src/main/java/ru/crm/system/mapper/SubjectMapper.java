@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Subject;
 import ru.crm.system.dto.subject.SubjectDto;
-import ru.crm.system.dto.subject.SubjectSaveDto;
 
 import java.util.List;
 
@@ -25,13 +24,13 @@ public class SubjectMapper {
                 .build();
     }
 
-    public Subject fromDto(SubjectSaveDto dto) {
-        return Subject.builder()
-                .name(dto.getName())
-                .students(dto.getStudents())
-                .teachers(dto.getTeachers())
-                .build();
-    }
+//    public Subject fromDto(SubjectSaveDto dto) {
+//        return Subject.builder()
+//                .name(dto.getName())
+//                .students(dto.getStudents())
+//                .teachers(dto.getTeachers())
+//                .build();
+//    }
 
     public List<Subject> fromDto(List<SubjectDto> dtolist) {
         return dtolist.stream()
