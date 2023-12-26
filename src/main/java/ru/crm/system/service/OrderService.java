@@ -99,6 +99,22 @@ public class OrderService {
                         })).flatMap(order -> order);
     }
 
+    @Transactional
+    public Optional<OrderReadDto> changeStatus(Integer orderId,
+                                               Integer adminId,
+                                               OrderStatus status) {
+        return orderRepository.findById(orderId)
+                .map(order -> {
+                    orderRepository.changeStatus(status);
+                    var logInfo = createChangeStatusLogInfo(adminId, orderId, status);
+                    publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
+                    orderRepository.flush();
+                    // TODO: 12/26/2023 add raw in log_info
+                    return order;
+                })
+                .map(orderReadMapper::map);
+    }
+
     /**
      * Метод для создания базового LogInfo для всех методов
      */
