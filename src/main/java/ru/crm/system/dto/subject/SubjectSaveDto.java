@@ -1,12 +1,11 @@
-package ru.crm.system.dto;
+package ru.crm.system.dto.subject;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import ru.crm.system.database.entity.Student;
-import ru.crm.system.database.entity.Teacher;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * DTO приходит с фронта для сохранения в базу данных,
@@ -21,7 +20,7 @@ public class SubjectSaveDto {
 
     String name;
 
-    List<Student> students = new ArrayList<>();
-
-    List<Teacher> teachers = new ArrayList<>();
+//    List<Student> students = new ArrayList<>();
+//
+//    List<Teacher> teachers = new ArrayList<>();
 }

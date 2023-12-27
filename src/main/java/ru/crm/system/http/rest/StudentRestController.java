@@ -1,5 +1,6 @@
 package ru.crm.system.http.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +25,7 @@ public class StudentRestController {
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get student by id")
     public StudentReadDto findById(@PathVariable Integer id) {
         return studentService.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Студент с номером %d не найден.", id)));
@@ -31,6 +33,7 @@ public class StudentRestController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Method to create teacher.")
     public StudentReadDto create(Integer orderId,
                                  Integer adminId,
                                  @Validated @RequestBody StudentCreateEditDto createDto) {
