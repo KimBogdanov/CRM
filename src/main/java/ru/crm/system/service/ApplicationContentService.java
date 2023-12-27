@@ -1,5 +1,6 @@
 package ru.crm.system.service;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
+@Data
 @Service
 @RequiredArgsConstructor
 public class ApplicationContentService {
