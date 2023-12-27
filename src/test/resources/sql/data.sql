@@ -3,8 +3,7 @@ VALUES (1, 'Андрей', 'Админов', '8-925-999-99-99', 'adminFirst@gmai
         '1900', 'admin_2.jgp'),
        (2, 'Пётр', 'Иванов', '8-925-888-88-88', 'adminSecond@gmail.com', '123', 'ADMIN',
         '1700', 'admin_2.jgp');
-SELECT SCOPE_IDENTITY();
-CALL IDENTITY();
+
 
 INSERT INTO ORDERS (ID, STATUS, ORDER_NAME, CLIENT_NAME, PHONE, REQUEST_SOURCE, CREATED_AT, ADMIN_ID)
 VALUES (1, 'UNPROCESSED', 'Глинка/Вокал', 'Илья', '8-924-555-55-55', 'Yandex', '2022-10-10', 1),

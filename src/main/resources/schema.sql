@@ -141,4 +141,3 @@ CREATE TABLE IF NOT EXISTS task
     end_date_time     TIMESTAMP   NOT NULL,
     task_Type         VARCHAR(64) NOT NULL
 );
--- Добавляем внешние ключи
