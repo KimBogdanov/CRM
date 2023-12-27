@@ -18,12 +18,13 @@
     <properties>
         <java.version>17</java.version>
         <springdoc.version>1.6.12</springdoc.version>
+        <h2.version>1.4.200</h2.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.200</version>
+            <version>${h2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
