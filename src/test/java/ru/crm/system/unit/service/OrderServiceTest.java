@@ -18,11 +18,13 @@ import ru.crm.system.service.OrderService;
 import ru.crm.system.util.DateTimeUtil;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -99,6 +101,17 @@ class OrderServiceTest {
 
         assertThat(actualOrder).isEmpty();
         verifyNoInteractions(orderReadMapper);
+    }
+
+    @Test
+    void findAll_shouldReturnAllOrders_whenOrdersExist() {
+        var orders = List.of(getOrder(), getOrder());
+        when(orderRepository.findAll()).thenReturn(orders);
+
+        var actualOrders = orderService.findAll();
+
+        assertThat(actualOrders).hasSize(2);
+        verify(orderReadMapper, times(2)).map(any(Order.class));
     }
 
     private OrderCreateEditDto getOrderCreateEditDto() {
