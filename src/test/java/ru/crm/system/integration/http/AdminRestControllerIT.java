@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 
 import static org.hamcrest.core.Is.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -26,7 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class AdminRestControllerIT {
 
-    private static final String BASE_ADMIN_URL = "/api/v1/admins";
+    private static final String BASE_ADMIN_URL = "/api/v1/admins/";
+    private static final Integer EXISTING_ADMIN_ID = 1;
+    private static final Integer NOT_EXISTING_ADMIN_ID = 999;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;
@@ -44,13 +47,31 @@ public class AdminRestControllerIT {
     void create_shouldCreateAdmin_andReturn201() throws Exception {
         var adminCreateDto = getAdminCreateDto();
         var requestBody = mapper.writeValueAsString(adminCreateDto);
-        mockMvc.perform(post(BASE_ADMIN_URL + "/create")
+        mockMvc.perform(post(BASE_ADMIN_URL + "create")
                         .contentType(APPLICATION_JSON)
                         .content(requestBody))
                 .andExpectAll(
                         status().isCreated(),
                         content().contentType(APPLICATION_JSON),
                         jsonPath("$.firstName", is("AdminFirstName")));
+    }
+
+    @Test
+    void findById_shouldReturn200_whenAdminExists() throws Exception {
+        mockMvc.perform(get(BASE_ADMIN_URL + EXISTING_ADMIN_ID))
+                .andExpectAll(
+                        status().isOk(),
+                        content().contentType(APPLICATION_JSON),
+                        jsonPath("$.firstName", is("Андрей")),
+                        jsonPath("$.lastName", is("Админов")),
+                        jsonPath("$.phone", is("8-925-999-99-99")),
+                        jsonPath("$.email", is("adminFirst@gmail.com")));
+    }
+
+    @Test
+    void findById_shouldReturn404_whenAdminNotExists() throws Exception {
+        mockMvc.perform(get(BASE_ADMIN_URL + NOT_EXISTING_ADMIN_ID))
+                .andExpect(status().isNotFound());
     }
 
     private AdminCreateEditDto getAdminCreateDto() {
