@@ -1,4 +1,4 @@
-package ru.crm.system.unit.service.http;
+package ru.crm.system.unit.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
