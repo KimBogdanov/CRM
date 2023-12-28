@@ -18,17 +18,20 @@ import ru.crm.system.service.OrderService;
 import ru.crm.system.util.DateTimeUtil;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
     private static final Integer EXISTING_ORDER_ID = 1;
+    private static final Integer NOT_EXISTING_ORDER_ID = 999;
 
     @Mock
     private OrderCreateEditMapper orderCreateEditMapper;
@@ -64,6 +67,38 @@ class OrderServiceTest {
         var orderArgumentCaptor = ArgumentCaptor.forClass(Order.class);
         verify(orderRepository).save(orderArgumentCaptor.capture());
         verify(publisher).publishEvent(any());
+    }
+
+    @Test
+    void findById_shouldReturnOrder_whenOrderExists() {
+        var orderEntity = getOrder();
+        var orderReadDto = getOrderReadDto();
+        when(orderRepository.findById(EXISTING_ORDER_ID)).thenReturn(Optional.of(orderEntity));
+        when(orderReadMapper.map(orderEntity)).thenReturn(orderReadDto);
+
+        var actualOrder = orderService.findById(EXISTING_ORDER_ID);
+
+        assertThat(actualOrder).isPresent();
+        actualOrder.ifPresent(order ->
+                assertAll(() -> {
+                    assertThat(order.id()).isEqualTo(EXISTING_ORDER_ID);
+                    assertThat(order.status()).isEqualTo(OrderStatus.UNPROCESSED);
+                    assertThat(order.orderName()).isEqualTo("Глинка/Вокал");
+                    assertThat(order.clientName()).isEqualTo("Андрей");
+                    assertThat(order.phone()).isEqualTo("8-924-989-59-04");
+                    assertThat(order.requestSource()).isEqualTo("Yandex");
+                    assertThat(order.createdAt()).isEqualTo("15-12-2023 10:15");
+                }));
+    }
+
+    @Test
+    void findById_shouldReturnEmpty_whenOrderNotExist() {
+        when(orderRepository.findById(NOT_EXISTING_ORDER_ID)).thenReturn(Optional.empty());
+
+        var actualOrder = orderService.findById(NOT_EXISTING_ORDER_ID);
+
+        assertThat(actualOrder).isEmpty();
+        verifyNoInteractions(orderReadMapper);
     }
 
     private OrderCreateEditDto getOrderCreateEditDto() {
