@@ -1,6 +1,7 @@
 package ru.crm.system.dto.order;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import ru.crm.system.database.entity.enums.OrderStatus;
 
@@ -8,19 +9,22 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Builder
+@Data
 @FieldNameConstants
-public record OrderCreateEditDto(OrderStatus status,
+public final class OrderCreateEditDto {
 
-                                 @NotBlank
-                                 String orderName,
+    private OrderStatus status;
 
-                                 @NotBlank
-                                 String clientName,
+    @NotBlank
+    private String orderName;
+    @NotBlank
+    private String clientName;
+    @NotBlank
+    private String phone;
 
-                                 @NotBlank
-                                 String phone,
+    private String requestSource;
 
-                                 String requestSource,
+    private LocalDateTime createdAt;
 
-                                 LocalDateTime createdAt) {
+    private Integer adminId;
 }
