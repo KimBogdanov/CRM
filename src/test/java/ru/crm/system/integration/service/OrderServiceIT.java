@@ -19,6 +19,7 @@ public class OrderServiceIT {
 
     private static final Integer EXISTING_ORDER_ID = 1;
     private static final Integer NOT_EXISTING_ORDER_ID = 999;
+    private static final Integer EXISING_ADMIN_ID = 1;
 
     private final OrderService orderService;
 
@@ -66,8 +67,33 @@ public class OrderServiceIT {
         assertThat(actualClientNames).containsExactly("Илья", "Андрей", "Пётр", "Маша", "Света");
     }
 
+    @Test
+    void update_shouldUpdateExistingOrderAndSetAdminId_whenOrderExistsAdnUnprocessed() {
+        var existingOrder = orderService.findById(EXISTING_ORDER_ID);
+        var updateDto = getOrderCreateEditDto();
+
+        var actualOrder = orderService.update(EXISTING_ORDER_ID, EXISING_ADMIN_ID, updateDto);
+
+        existingOrder.ifPresent(order -> {
+            assertThat(order.adminId()).isNull();
+            assertThat(order.status()).isEqualTo(OrderStatus.UNPROCESSED);
+        });
+        assertThat(actualOrder).isPresent();
+        actualOrder.ifPresent(order ->
+                assertAll(() -> {
+                    assertThat(order.id()).isEqualTo(EXISTING_ORDER_ID);
+                    assertThat(order.status()).isEqualTo(OrderStatus.UNPROCESSED);
+                    assertThat(order.orderName()).isEqualTo("Глинка/Вокал");
+                    assertThat(order.clientName()).isEqualTo("Андрей");
+                    assertThat(order.phone()).isEqualTo("8-924-989-59-04");
+                    assertThat(order.requestSource()).isEqualTo("Yandex");
+                    assertThat(order.adminId()).isEqualTo(EXISING_ADMIN_ID);
+                }));
+    }
+
     private OrderCreateEditDto getOrderCreateEditDto() {
         return OrderCreateEditDto.builder()
+                .adminId(EXISING_ADMIN_ID)
                 .status(OrderStatus.UNPROCESSED)
                 .orderName("Глинка/Вокал")
                 .clientName("Андрей")

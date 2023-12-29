@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.database.entity.enums.OrderStatus;
+import ru.crm.system.database.repository.AdminRepository;
 import ru.crm.system.database.repository.OrderRepository;
 import ru.crm.system.dto.order.OrderCreateEditDto;
 import ru.crm.system.dto.order.OrderReadDto;
@@ -34,6 +35,7 @@ class OrderServiceTest {
 
     private static final Integer EXISTING_ORDER_ID = 1;
     private static final Integer NOT_EXISTING_ORDER_ID = 999;
+    private static final Integer EXISING_ADMIN_ID = 1;
 
     @Mock
     private OrderCreateEditMapper orderCreateEditMapper;
@@ -43,6 +45,8 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
     @Mock
     private ApplicationEventPublisher publisher;
+    @Mock
+    private AdminRepository adminRepository;
     @InjectMocks
     private OrderService orderService;
 
@@ -112,6 +116,33 @@ class OrderServiceTest {
 
         assertThat(actualOrders).hasSize(2);
         verify(orderReadMapper, times(2)).map(any(Order.class));
+    }
+
+    @Test
+    void update_shouldUpdateExisting_whenOrderExists() {
+        var orderEntity = getOrder();
+        var updateDto = getOrderCreateEditDto();
+        var orderReadDto = getOrderReadDto();
+
+        when(orderRepository.findById(EXISTING_ORDER_ID)).thenReturn(Optional.of(orderEntity));
+        when(orderCreateEditMapper.map(updateDto, orderEntity)).thenReturn(orderEntity);
+        when(orderRepository.saveAndFlush(orderEntity)).thenReturn(orderEntity);
+        when(orderReadMapper.map(orderEntity)).thenReturn(orderReadDto);
+
+        var actualOrder = orderService.update(EXISTING_ORDER_ID, EXISING_ADMIN_ID, updateDto);
+
+        assertThat(actualOrder).isPresent();
+        actualOrder.ifPresent(order ->
+                assertAll(() -> {
+                    assertThat(order.id()).isEqualTo(EXISTING_ORDER_ID);
+                    assertThat(order.status()).isEqualTo(OrderStatus.UNPROCESSED);
+                    assertThat(order.orderName()).isEqualTo("Глинка/Вокал");
+                    assertThat(order.clientName()).isEqualTo("Андрей");
+                    assertThat(order.phone()).isEqualTo("8-924-989-59-04");
+                    assertThat(order.requestSource()).isEqualTo("Yandex");
+                    assertThat(order.requestSource()).isEqualTo("Yandex");
+                }));
+        verify(adminRepository).findById(EXISING_ADMIN_ID);
     }
 
     private OrderCreateEditDto getOrderCreateEditDto() {
