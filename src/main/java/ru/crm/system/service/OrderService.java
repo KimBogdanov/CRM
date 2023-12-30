@@ -42,7 +42,7 @@ public class OrderService {
                 .map(orderRepository::save)
                 .map(order -> {
                     var logInfo = createLogInfo(order.getId());
-                    logInfo.setDescription("Создана новая заявка");
+                    logInfo.setDescription(String.format("Создана новая заявка (№%s)", order.getId()));
                     logInfo.setAction(ActionType.CREATED);
                     publisher.publishEvent(new EntityEvent<>(order, AccessType.CREATE, logInfo));
                     return orderReadMapper.map(order);
@@ -105,11 +105,10 @@ public class OrderService {
                         adminRepository.findById(adminId)
                                 .ifPresent(order::setAdmin);
                     }
-                    orderRepository.changeStatus(status);
+                    order.setStatus(status);
                     var logInfo = createChangeStatusLogInfo(adminId, orderId, status);
                     publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
-                    orderRepository.flush();
-                    return order;
+                    return orderRepository.saveAndFlush(order);
                 })
                 .map(orderReadMapper::map);
     }
