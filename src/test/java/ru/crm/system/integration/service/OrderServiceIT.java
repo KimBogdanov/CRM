@@ -91,6 +91,22 @@ public class OrderServiceIT {
                 }));
     }
 
+    @Test
+    void changeStatus_shouldChangeStatusAndSetAdmin_ifOrderExistsAndHaveNoAdmin() {
+        var existingOrder = orderService.findById(EXISTING_ORDER_ID);
+        var actualOrder = orderService.changeStatus(EXISTING_ORDER_ID, EXISING_ADMIN_ID, OrderStatus.APPOINTMENT_COMPLETED);
+
+        existingOrder.ifPresent(order ->
+                assertAll(() -> {
+                    assertThat(order.adminId()).isNull();
+                    assertThat(order.status()).isEqualTo(OrderStatus.UNPROCESSED);
+                }));
+        actualOrder.ifPresent(order -> assertAll(() -> {
+            assertThat(order.adminId()).isEqualTo(EXISING_ADMIN_ID);
+            assertThat(order.status()).isEqualTo(OrderStatus.APPOINTMENT_COMPLETED);
+        }));
+    }
+
     private OrderCreateEditDto getOrderCreateEditDto() {
         return OrderCreateEditDto.builder()
                 .adminId(EXISING_ADMIN_ID)
