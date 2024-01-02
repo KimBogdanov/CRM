@@ -19,6 +19,9 @@
         <java.version>17</java.version>
         <springdoc.version>1.6.12</springdoc.version>
         <h2.version>1.4.200</h2.version>
+        <site-plugin.version>4.0.0-M3</site-plugin.version>
+        <reports-plugin.version>3.4.1</reports-plugin.version>
+        <jacoco.version>0.8.8</jacoco.version>
     </properties>
     <dependencies>
         <dependency>
@@ -69,6 +72,70 @@
                         <builder>paketobuildpacks/builder-jammy-base:latest</builder>
                     </image>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${site-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${reports-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>ru.crm.system.database.entity.Order.class</exclude>
+                        <exclude>ru.crm.system.dto.*</exclude>
+                        <exclude>ru.crm.system.config.*</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-jacoco-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>ru.crm.system.database.entity/**/*</exclude>
+                                <exclude>ru.crm.system.dto.*</exclude>
+                                <exclude>ru.crm.system.config.*</exclude>
+                            </excludes>
+                        </configuration>
+                        <phase>prepare-package</phase>
+                    </execution>
+                    <!--                    <execution>-->
+                    <!--                        <id>default-check</id>-->
+                    <!--                        <goals>-->
+                    <!--                            <goal>check</goal>-->
+                    <!--                        </goals>-->
+                    <!--                        <configuration>-->
+                    <!--                            <rules>-->
+                    <!--                                <rule>-->
+                    <!--                                    <element>BUNDLE</element>-->
+                    <!--                                    <limits>-->
+                    <!--                                        <limit>-->
+                    <!--                                            <counter>COMPLEXITY</counter>-->
+                    <!--                                            <value>COVEREDRATIO</value>-->
+                    <!--                                            <minumun>0.5</minumun>-->
+                    <!--                                        </limit>-->
+                    <!--                                    </limits>-->
+                    <!--                                </rule>-->
+                    <!--                            </rules>-->
+                    <!--                        </configuration>-->
+                    <!--                    </execution>-->
+                </executions>
             </plugin>
         </plugins>
         <resources>
