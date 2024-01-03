@@ -15,6 +15,7 @@ import ru.crm.system.service.OrderService;
 import ru.crm.system.util.DateTimeUtil;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -67,6 +68,16 @@ public class OrderRestControllerTest {
         verify(orderService).findById(captor.capture());
         verify(orderService).findById(any());
         assertThat(captor.getValue()).isEqualTo(NOT_EXISTING_ORDER_ID);
+    }
+
+    @Test
+    void findAll_shouldReturn200_whenOrdersExist() throws Exception {
+        var orderReadDto = getOrderReadDto();
+        when(orderService.findAll()).thenReturn(List.of(orderReadDto, orderReadDto));
+        mockMvc.perform(get(BASE_ORDER_URL))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     private OrderReadDto getOrderReadDto() {

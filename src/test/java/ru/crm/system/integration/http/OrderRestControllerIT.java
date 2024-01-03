@@ -62,4 +62,11 @@ public class OrderRestControllerIT {
 
         assertThat(requireNonNull(mvcResult.getResolvedException()).getClass()).hasSameClassAs(NotFoundException.class);
     }
+
+    @Test
+    void findAll_shouldReturn200_whenOrdersExist() throws Exception {
+        mockMvc.perform(get(BASE_ORDER_URL))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
 }
