@@ -2,13 +2,17 @@ package ru.crm.system.integration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import ru.crm.system.database.entity.Comment;
+import ru.crm.system.database.entity.LogInfo;
 import ru.crm.system.database.entity.enums.OrderStatus;
+import ru.crm.system.database.repository.OrderRepository;
 import ru.crm.system.dto.order.OrderCreateEditDto;
 import ru.crm.system.dto.order.OrderReadDto;
 import ru.crm.system.integration.IT;
 import ru.crm.system.service.OrderService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -22,6 +26,7 @@ public class OrderServiceIT {
     private static final Integer EXISING_ADMIN_ID = 1;
 
     private final OrderService orderService;
+    private final OrderRepository orderRepository;
 
     @Test
     void create_shouldCreateOrderAndLogInfo() {
@@ -105,6 +110,27 @@ public class OrderServiceIT {
             assertThat(order.adminId()).isEqualTo(EXISING_ADMIN_ID);
             assertThat(order.status()).isEqualTo(OrderStatus.APPOINTMENT_COMPLETED);
         }));
+    }
+
+    @Test
+    void addComment_shouldAddCommentAndLogInfo_ifOrderExists() {
+        orderService.addComment(EXISTING_ORDER_ID, EXISING_ADMIN_ID, "Тестовый комментарий");
+        var actualOrder = orderRepository.findById(EXISTING_ORDER_ID);
+
+        List<Comment> comments;
+        List<LogInfo> logInfos;
+
+        if (actualOrder.isPresent()) {
+            comments = actualOrder.get().getComments();
+            logInfos = actualOrder.get().getLogInfos();
+
+            assertThat(comments).hasSize(1);
+            assertThat(comments.get(0).getText()).isEqualTo("Тестовый комментарий");
+
+            assertThat(logInfos).hasSize(1);
+            assertThat(logInfos.get(0).getDescription())
+                    .isEqualTo("Админ Андрей Админов добавил комментарий к заявке №1: Тестовый комментарий");
+        }
     }
 
     private OrderCreateEditDto getOrderCreateEditDto() {
