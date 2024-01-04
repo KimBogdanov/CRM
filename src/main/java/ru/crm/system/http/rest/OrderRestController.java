@@ -38,7 +38,7 @@ public class OrderRestController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Method to get all orders from database.")
-    public List<OrderReadDto> getAll() {
+    public List<OrderReadDto> findAll() {
         return orderService.findAll();
     }
 
