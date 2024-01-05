@@ -4,7 +4,6 @@ spring:
       mode: always
   datasource:
     url: jdbc:h2:file:./db/crm;AUTO_SERVER=TRUE
-#    url: jdbc:h2:mem:testdb;
     username: sa
     password: password
     driver-class-name: org.h2.Driver
@@ -30,4 +29,3 @@ my-app:
     no-image-available: \src\main\resources\images\NoImageAvailable.jpg
 server:
   port: 8080
-#  address: 0.0.0.0

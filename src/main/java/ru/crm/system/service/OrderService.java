@@ -42,7 +42,7 @@ public class OrderService {
                 .map(orderRepository::save)
                 .map(order -> {
                     var logInfo = createLogInfo(order.getId());
-                    logInfo.setDescription("Создана новая заявка");
+                    logInfo.setDescription(String.format("Создана новая заявка (№%s)", order.getId()));
                     logInfo.setAction(ActionType.CREATED);
                     publisher.publishEvent(new EntityEvent<>(order, AccessType.CREATE, logInfo));
                     return orderReadMapper.map(order);
@@ -67,16 +67,12 @@ public class OrderService {
                                          OrderCreateEditDto editDto) {
         return orderRepository.findById(orderId)
                 .map(order -> {
-                    if (order.getStatus() != editDto.status()) {
-                        var logInfo = createChangeStatusLogInfo(adminId, orderId, editDto.status());
-                        publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
-                    }
                     if (order.getAdmin() == null) {
                         adminRepository.findById(adminId)
                                 .ifPresent(order::setAdmin);
+                        editDto.setAdminId(adminId);
                     }
-                    orderCreatedEditMapper.map(editDto, order);
-                    return order;
+                    return orderCreatedEditMapper.map(editDto, order);
                 })
                 .map(orderRepository::saveAndFlush)
                 .map(orderReadMapper::map);
@@ -85,15 +81,15 @@ public class OrderService {
     @Transactional
     public Optional<OrderReadDto> addComment(Integer orderId,
                                              Integer adminId,
-                                             String text) {
+                                             String comment) {
         return adminRepository.findById(adminId)
                 .map(admin -> orderRepository.findById(orderId).
                         map(order -> {
                             if (order.getStatus().equals(OrderStatus.UNPROCESSED)) {
                                 order.setAdmin(admin);
                             }
-                            order.addComment(createComment(text));
-                            var logInfo = createCommentLogInfo(orderId, text, admin);
+                            order.addComment(createComment(comment));
+                            var logInfo = createCommentLogInfo(orderId, comment, admin);
                             publisher.publishEvent(new EntityEvent<>(order, AccessType.UPDATE, logInfo));
                             return orderReadMapper.map(order);
                         })).flatMap(order -> order);
@@ -105,12 +101,14 @@ public class OrderService {
                                                OrderStatus status) {
         return orderRepository.findById(orderId)
                 .map(order -> {
-                    orderRepository.changeStatus(status);
+                    if (order.getAdmin() == null) {
+                        adminRepository.findById(adminId)
+                                .ifPresent(order::setAdmin);
+                    }
+                    order.setStatus(status);
                     var logInfo = createChangeStatusLogInfo(adminId, orderId, status);
                     publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
-                    orderRepository.flush();
-                    // TODO: 12/26/2023 add raw in log_info
-                    return order;
+                    return orderRepository.saveAndFlush(order);
                 })
                 .map(orderReadMapper::map);
     }
@@ -128,8 +126,8 @@ public class OrderService {
     /**
      * Метод для создания Comment
      */
-    private Comment createComment(String text) {
-        return Comment.of(text, now().truncatedTo(SECONDS));
+    private Comment createComment(String comment) {
+        return Comment.of(comment, now().truncatedTo(SECONDS));
     }
 
     /**
@@ -140,7 +138,7 @@ public class OrderService {
         var actionType = getActionType(status);
         logInfo.setAction(actionType);
         logInfo.setAdminId(adminId);
-        logInfo.setDescription("Статус заявки изменён на: " + status.name());
+        logInfo.setDescription(String.format("Статус заявки №%s изменён на: %s ", orderId, status.name()));
         return logInfo;
     }
 
@@ -157,7 +155,7 @@ public class OrderService {
     /**
      * Метод для создания LogInfo при добавлении комментария к заказу
      */
-    private LogInfoCreateDto createCommentLogInfo(Integer orderId, String text, Admin admin) {
+    private LogInfoCreateDto createCommentLogInfo(Integer orderId, String comment, Admin admin) {
         var logInfo = createLogInfo(orderId);
         logInfo.setAdminId(admin.getId());
         logInfo.setAction(ActionType.COMMENT);
@@ -165,7 +163,7 @@ public class OrderService {
                 admin.getUserInfo().getFirstName(),
                 admin.getUserInfo().getLastName(),
                 orderId,
-                text));
+                comment));
         return logInfo;
     }
 }
