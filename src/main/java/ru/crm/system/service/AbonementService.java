@@ -30,6 +30,7 @@ public class AbonementService {
     private final AbonementCreateEditMapper abonementCreateEditMapper;
     private final AbonementReadMapper abonementReadMapper;
     private final ApplicationEventPublisher publisher;
+    private final LogInfoService logInfoService;
 
     public Optional<AbonementReadDto> findById(Integer id) {
         return abonementRepository.findById(id)
@@ -44,7 +45,7 @@ public class AbonementService {
                 .map(abonementCreateEditMapper::map)
                 .map(abonementRepository::save)
                 .map(abonement -> {
-                    var logInfo = createLogInfo(orderId);
+                    var logInfo = logInfoService.createBaseLogInfo(orderId);
                     logInfo.setAction(ActionType.SALE_OF_SUBSCRIPTION);
                     logInfo.setAdminId(adminId);
                     logInfo.setDescription(String.format("Продан абонемент на сумму %s руб. студенту с id %d",
@@ -87,16 +88,6 @@ public class AbonementService {
                 .createdAt(now().truncatedTo(SECONDS))
                 .adminId(adminId)
                 .teacherId(abonement.getId())
-                .build();
-    }
-
-    /**
-     * Метод для создания базового LogInfo для всех методов
-     */
-    private LogInfoCreateDto createLogInfo(Integer orderId) {
-        return LogInfoCreateDto.builder()
-                .createdAt(now().truncatedTo(SECONDS))
-                .orderId(orderId)
                 .build();
     }
 

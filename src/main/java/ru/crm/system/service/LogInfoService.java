@@ -10,6 +10,9 @@ import ru.crm.system.mapper.LogInfoCreateMapper;
 
 import java.util.Optional;
 
+import static java.time.LocalDateTime.now;
+import static java.time.temporal.ChronoUnit.SECONDS;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -25,5 +28,15 @@ public class LogInfoService {
                 .map(logInfoRepository::save)
                 .map(LogInfo::getId)
                 .orElseThrow();
+    }
+
+    /**
+     * Метод для создания базового LogInfo для всех методов
+     */
+    public LogInfoCreateDto createBaseLogInfo(Integer orderId) {
+        return LogInfoCreateDto.builder()
+                .createdAt(now().truncatedTo(SECONDS))
+                .orderId(orderId)
+                .build();
     }
 }
