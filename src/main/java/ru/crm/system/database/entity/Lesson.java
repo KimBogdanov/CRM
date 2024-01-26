@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.crm.system.converter.MoneyConverter;
+import ru.crm.system.database.entity.enums.LessonPayType;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.entity.enums.LessonType;
 
@@ -17,35 +19,35 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(exclude = {"id", "student", "teacher"})
-@ToString(exclude = {"student", "teacher", "subject", "comments"})
+@SuperBuilder
+@EqualsAndHashCode(exclude = {"students", "teacher"}, callSuper = true)
+@ToString(exclude = {"students", "teacher", "subject", "comments"}, callSuper = true)
 @Entity
-public class Lesson implements BaseEntity<Integer> {
+public class Lesson extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Student student;
+    @ManyToMany(mappedBy = "lessons", cascade = {PERSIST, MERGE})
+    private List<Student> students;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Teacher teacher;
 
-    private LocalDateTime dateTime;
+    private LocalDate data;
+
+    private LocalTime time;
 
     private Integer duration;
 
@@ -56,7 +58,10 @@ public class Lesson implements BaseEntity<Integer> {
     private LessonStatus status;
 
     @Enumerated(EnumType.STRING)
-    private LessonType type;
+    private LessonPayType payType;
+
+    @Enumerated(EnumType.STRING)
+    private LessonType lessonType;
 
     private String description;
 

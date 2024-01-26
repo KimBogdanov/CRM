@@ -1,25 +1,30 @@
 package ru.crm.system.database.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.crm.system.database.entity.enums.ObjectType;
 import ru.crm.system.database.entity.enums.TaskType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(of = {"description", "createdDateTime"})
-@ToString(exclude = {"id"})
+@SuperBuilder
+@EqualsAndHashCode(of = {"description", "createdDateTime"}, callSuper = true)
+@ToString(exclude = {"id"}, callSuper = true)
 @Table(name = "task")
 @Entity
-public class Task implements BaseEntity<Long> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Task extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
     private ObjectType objectType;

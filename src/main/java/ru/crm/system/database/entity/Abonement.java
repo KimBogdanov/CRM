@@ -1,11 +1,11 @@
 package ru.crm.system.database.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.crm.system.converter.MoneyConverter;
 import ru.crm.system.database.entity.enums.AbonementStatus;
 import ru.crm.system.database.entity.enums.AbonementType;
@@ -15,9 +15,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,15 +22,11 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(exclude = {"id", "type"})
-@ToString(exclude = {"id", "type"})
+@SuperBuilder
+@EqualsAndHashCode(exclude = {"id", "type"}, callSuper = true)
+@ToString(exclude = {"id", "type"}, callSuper = true)
 @Entity
-public class Abonement implements BaseEntity<Integer> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Abonement extends AbstractEntity {
 
     private Integer numberOfLessons;
 

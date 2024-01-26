@@ -6,14 +6,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.crm.system.converter.MoneyConverter;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,15 +20,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(of = "userInfo")
-@ToString(exclude = {"id", "orders", "logInfos", "salaryLogs"})
+@SuperBuilder
+@EqualsAndHashCode(of = "userInfo", callSuper = true)
+@ToString(exclude = {"id", "orders", "logInfos", "salaryLogs"}, callSuper = true)
 @Entity
-public class Admin implements BaseEntity<Integer> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Admin extends AbstractEntity {
 
     private UserInfo userInfo;
 

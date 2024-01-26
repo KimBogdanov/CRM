@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.crm.system.database.entity.enums.OrderStatus;
 
 import javax.persistence.CollectionTable;
@@ -14,9 +15,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -27,16 +25,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(of = {"phone", "createdAt"})
-@ToString(exclude = {"id", "admin", "logInfos", "comments"})
+@SuperBuilder
+@EqualsAndHashCode(of = {"phone", "createdAt"}, callSuper = true)
+@ToString(exclude = {"id", "admin", "logInfos", "comments"}, callSuper = true)
 @Table(name = "orders")
 @Entity
-public class Order implements BaseEntity<Integer> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Order extends AbstractEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
