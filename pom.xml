@@ -12,13 +12,13 @@
     <groupId>ru.crm</groupId>
     <artifactId>system</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <name>system</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>17</java.version>
         <springdoc.version>1.6.12</springdoc.version>
-        <h2.version>1.4.200</h2.version>
+        <h2.version>2.1.214</h2.version>
         <site-plugin.version>4.0.0-M3</site-plugin.version>
         <reports-plugin.version>3.4.1</reports-plugin.version>
         <jacoco.version>0.8.8</jacoco.version>
@@ -135,7 +135,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>crm-codereview</directory>
+                <directory>crm</directory>
                 <excludes>
                     <exclude>./build/**/</exclude>
                     <exclude>./node_modules/**/</exclude>
