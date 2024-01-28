@@ -40,7 +40,7 @@ public class Student  extends AbstractEntity {
     private Abonement abonement;
 
     @Builder.Default
-    @ManyToMany(mappedBy = "student_id", cascade = {PERSIST, MERGE})
+    @ManyToMany(cascade = {PERSIST, MERGE})
     @JoinTable(name = "student_lesson",
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "lesson_id"))

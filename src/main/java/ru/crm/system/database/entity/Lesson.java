@@ -45,7 +45,7 @@ public class Lesson extends AbstractEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Teacher teacher;
 
-    private LocalDate data;
+    private LocalDate date;
 
     private LocalTime time;
 

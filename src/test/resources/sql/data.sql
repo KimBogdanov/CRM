@@ -39,22 +39,33 @@ VALUES (1, 'Наталья', 'Петрова', '8-88-88-88-8', 'natalya@Gmail.co
        (2, 'Мария', 'Иванова', '8-88-88-88-9', 'mariay@Gmail.com', '123', 'TEACHER', 800, 'ACTIVE', 'mariya.jpg', 0.7),
        (3, 'Антон', 'Попов', '8-88-88-99-8', 'anton@Gmail.com', '123', 'TEACHER', 1000, 'ACTIVE', 'anton.jpg', 0.8);
 
-INSERT INTO LESSON(ID, STUDENT_ID, TEACHER_ID, DATE_TIME, DURATION, SUBJECT_ID, STATUS, TYPE, DESCRIPTION, COST)
-VALUES (1, 1, 1, '2023-12-10', 45, 1, 'APPOINTED', 'FREE', 'description of lesson', 450),
-       (2, 2, 2, '2023-12-10', 45, 2, 'APPOINTED', 'PAID', 'description of lesson', 450),
-       (3, 3, 3, '2023-12-10', 45, 3, 'APPOINTED', 'PAID', 'description of lesson', 450),
-       (4, 4, 1, '2023-12-10', 45, 4, 'APPOINTED', 'PAID', 'description of lesson', 600),
-       (5, 5, 2, '2023-12-10', 45, 5, 'APPOINTED', 'PAID', 'description of lesson', 450),
-       (6, 1, 3, '2023-12-10', 45, 1, 'APPOINTED', 'PAID', 'description of lesson', 900),
-       (7, 2, 1, '2023-12-10', 45, 2, 'APPOINTED', 'PAID', 'description of lesson', 450),
-       (8, 3, 2, '2023-12-10', 45, 3, 'APPOINTED', 'PAID', 'description of lesson', 800),
-       (9, 4, 3, '2023-12-10', 45, 4, 'APPOINTED', 'PAID', 'description of lesson', 550),
-       (10, 5, 1, '2023-12-10', 45, 5, 'APPOINTED', 'PAID', 'description of lesson', 450);
+INSERT INTO LESSON(ID, TEACHER_ID, DATE, TIME, DURATION, SUBJECT_ID, STATUS, PAY_TYPE, LESSON_TYPE, DESCRIPTION, COST)
+VALUES (1, 1, '2023-12-10', '10:00', 45, 1, 'APPOINTED', 'FREE', 'INDIVIDUAL', 'description of lesson', 450),
+       (2, 2, '2023-12-10', '10:15', 45, 2, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 450),
+       (3, 3, '2023-12-10', '11:00', 45, 3, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 450),
+       (4, 3, '2023-12-10', '11:45', 45, 4, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 600),
+       (5, 2, '2023-12-10', '12:00', 45, 5, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 450),
+       (6, 1, '2023-12-10', '12:00', 45, 1, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 900),
+       (7, 2, '2023-12-10', '12:00', 45, 2, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 450),
+       (8, 3, '2023-12-10', '12:00', 45, 3, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 800),
+       (9, 3, '2023-12-10', '12:00', 45, 4, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 550),
+       (10, 2, '2023-12-10', '12:00', 45, 5, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 450);
 
-INSERT INTO TEACHERS_SUBJECT (TEACHER_ID, SUBJECT_ID)
+INSERT INTO TEACHER_SUBJECT (TEACHER_ID, SUBJECT_ID)
 VALUES (1, 1),
        (1, 2),
        (2, 3),
        (2, 4),
        (2, 5),
        (3, 1);
+
+INSERT INTO STUDENT_LESSON(STUDENT_ID, LESSON_ID)
+VALUES (1, 1),
+       (2, 1),
+       (3, 1),
+       (2, 2),
+       (3, 2),
+       (1, 3),
+       (2, 3),
+       (3, 3),
+       (1, 4);

@@ -92,13 +92,14 @@ CREATE TABLE IF NOT EXISTS abonement
 CREATE TABLE IF NOT EXISTS lesson
 (
     id          INT AUTO_INCREMENT PRIMARY KEY,
-    student_id  INT          NOT NULL REFERENCES student (id),
-    teacher_id  INT          NOT NULL REFERENCES teacher (id),
-    date_time   TIMESTAMP(0) NOT NULL,
-    duration    INT          NOT NULL,
-    subject_id  INT          NOT NULL REFERENCES subject (id),
-    status      VARCHAR(64)  NOT NULL,
-    type        VARCHAR(64),
+    teacher_id  INT         NOT NULL REFERENCES teacher (id),
+    date        DATE        NOT NULL,
+    time        TIME(0)     NOT NULL,
+    duration    INT         NOT NULL,
+    subject_id  INT         NOT NULL REFERENCES subject (id),
+    status      VARCHAR(64) NOT NULL,
+    pay_type    VARCHAR(64),
+    lesson_type VARCHAR(64),
     description VARCHAR(128),
     cost        NUMERIC(10, 2)
 );
@@ -114,7 +115,7 @@ CREATE TABLE IF NOT EXISTS comment
 );
 -- rollback DROP TABLE comment;
 
-CREATE TABLE IF NOT EXISTS teachers_subject
+CREATE TABLE IF NOT EXISTS teacher_subject
 (
     teacher_id INT REFERENCES teacher (id) ON DELETE CASCADE,
     subject_id INT REFERENCES subject (id) ON DELETE CASCADE,
@@ -130,15 +131,23 @@ CREATE TABLE IF NOT EXISTS salary_log
     teacher_id INT REFERENCES teacher (id),
     admin_id   INT REFERENCES admin (id)
 );
+
 --rollback DROP TABLE salary_log;
 CREATE TABLE IF NOT EXISTS task
 (
-    id                LONG AUTO_INCREMENT PRIMARY KEY,
+    id                INT AUTO_INCREMENT PRIMARY KEY,
     object_type       VARCHAR(64),
-    object_id         LONG,
+    object_id         INT,
     description       VARCHAR(64) NOT NULL,
     created_date_time TIMESTAMP   NOT NULL,
     end_date_time     TIMESTAMP   NOT NULL,
     task_Type         VARCHAR(64) NOT NULL
 );
--- Добавляем внешние ключи
+
+CREATE TABLE IF NOT EXISTS student_lesson
+(
+    student_id INT REFERENCES student (id),
+    lesson_id  INT REFERENCES lesson (id),
+    PRIMARY KEY (student_id, lesson_id)
+)
+--rollback DROP TABLE student_lesson;
