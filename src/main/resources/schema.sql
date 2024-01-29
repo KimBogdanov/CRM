@@ -149,5 +149,5 @@ CREATE TABLE IF NOT EXISTS student_lesson
     student_id INT REFERENCES student (id),
     lesson_id  INT REFERENCES lesson (id),
     PRIMARY KEY (student_id, lesson_id)
-)
+);
 --rollback DROP TABLE student_lesson;

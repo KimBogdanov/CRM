@@ -20,5 +20,4 @@ public abstract class AbstractEntity implements BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
 }
