@@ -2,7 +2,7 @@ package ru.crm.system.dto.lesson;
 
 import lombok.Builder;
 import ru.crm.system.database.entity.enums.LessonStatus;
-import ru.crm.system.database.entity.enums.LessonType;
+import ru.crm.system.database.entity.enums.LessonPayType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public record LessonReadDto(Integer id,
                             Integer duration,
                             String subject,
                             LessonStatus status,
-                            LessonType type,
+                            LessonPayType type,
                             String description,
                             BigDecimal cost) {
 }
