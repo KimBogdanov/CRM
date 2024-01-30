@@ -11,7 +11,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("""
             select st from Student st
             left join Subject sj on st.subject.id = sj.id
-            where sj.name =: subject
+            where sj.name =:subject
             """)
     List<Student> findAllBySubject(String subject);
 }
