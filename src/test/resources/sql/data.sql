@@ -5,11 +5,11 @@ VALUES (1, 'Андрей', 'Админов', '8-925-999-99-99', 'adminFirst@gmai
         '1700', 'admin_2.jgp');
 
 INSERT INTO ORDERS (ID, STATUS, ORDER_NAME, CLIENT_NAME, PHONE, REQUEST_SOURCE, CREATED_AT, ADMIN_ID)
-VALUES (1, 'UNPROCESSED', 'Глинка/Вокал', 'Илья', '8-924-555-55-55', 'Yandex', '2022-10-10', 1),
+VALUES (1, 'UNPROCESSED', 'Глинка/Вокал', 'Илья', '8-924-555-55-55', 'Yandex', '2022-10-10', NULL),
        (2, 'APPOINTMENT_SCHEDULED', 'Гитара', 'Андрей', '8-924-555-55-66', 'Авито', '2022-10-10', 1),
        (3, 'POOR_LEAD', 'Скрипка', 'Пётр', '8-924-555-55-77', 'Авито', '2022-10-10', 2),
        (4, 'REFUSED_TO_PURCHASE', 'Фортепиано', 'Маша', '8-924-555-55-88', 'Yandex', '2022-10-10', 1),
-       (5, 'UNPROCESSED', 'Ударные', 'Света', '8-924-555-55-99', 'Yandex', '2022-10-10', 2);
+       (5, 'UNPROCESSED', 'Ударные', 'Света', '8-924-555-55-99', 'Yandex', '2022-10-10', NULL);
 
 INSERT INTO SUBJECT (ID, NAME)
 VALUES (1, 'Вокал'),
