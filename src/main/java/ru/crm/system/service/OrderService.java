@@ -67,13 +67,12 @@ public class OrderService {
                                          OrderCreateEditDto editDto) {
         return orderRepository.findById(orderId)
                 .map(order -> {
-                    if (order.getStatus() != editDto.status()) {
-                        var logInfo = createChangeStatusLogInfo(adminId, orderId, editDto.status());
+                    if (order.getStatus() != editDto.getStatus()) {
+                        var logInfo = createChangeStatusLogInfo(adminId, orderId, editDto.getStatus());
                         publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
                     }
                     if (order.getAdmin() == null) {
-                        adminRepository.findById(adminId)
-                                .ifPresent(order::setAdmin);
+                        editDto.setAdminId(adminId);
                     }
                     orderCreatedEditMapper.map(editDto, order);
                     return order;
@@ -105,11 +104,9 @@ public class OrderService {
                                                OrderStatus status) {
         return orderRepository.findById(orderId)
                 .map(order -> {
-                    orderRepository.changeStatus(status);
+                    order.setStatus(status);
                     var logInfo = createChangeStatusLogInfo(adminId, orderId, status);
                     publisher.publishEvent(new EntityEvent<>(order, AccessType.CHANGE_STATUS, logInfo));
-                    orderRepository.flush();
-                    // TODO: 12/26/2023 add raw in log_info
                     return order;
                 })
                 .map(orderReadMapper::map);
