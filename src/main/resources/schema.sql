@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS admin
     shift_rate NUMERIC(8, 2) NOT NULL,
     avatar     VARCHAR(128)
 );
--- rollback DROP TABLE admin
 
 CREATE TABLE IF NOT EXISTS orders
 (
@@ -23,14 +22,12 @@ CREATE TABLE IF NOT EXISTS orders
     created_at     TIMESTAMP(0) NOT NULL,
     admin_id       INT REFERENCES admin (id)
 );
--- rollback DROP TABLE orders;
 
 CREATE TABLE IF NOT EXISTS subject
 (
     id   INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(64) NOT NULL UNIQUE
 );
---rollback DROP TABLE log_info;
 
 CREATE TABLE IF NOT EXISTS student
 (
@@ -44,7 +41,6 @@ CREATE TABLE IF NOT EXISTS student
     subject_id INT REFERENCES subject (id),
     avatar     VARCHAR(128)
 );
--- rollback DROP TABLE subject;
 
 CREATE TABLE IF NOT EXISTS teacher
 (
@@ -60,8 +56,6 @@ CREATE TABLE IF NOT EXISTS teacher
     status          VARCHAR(32)  NOT NULL,
     pay_ratio       DOUBLE
 );
--- rollback DROP TABLE teacher;
-
 
 CREATE TABLE IF NOT EXISTS log_info
 (
@@ -74,20 +68,18 @@ CREATE TABLE IF NOT EXISTS log_info
     student_id  INT REFERENCES student (id),
     teacher_id  INT REFERENCES teacher (id)
 );
--- rollback DROP TABLE student;
 
 CREATE TABLE IF NOT EXISTS abonement
 (
     id                INT AUTO_INCREMENT PRIMARY KEY,
-    number_of_lessons INT     NOT NULL,
+    number_of_lessons INT         NOT NULL,
     balance           NUMERIC(10, 2),
     type              VARCHAR(32),
     begin             DATE,
     expire            DATE,
-    status            VARCHAR NOT NULL,
+    status            VARCHAR(64) NOT NULL,
     student_id        INT REFERENCES student (id)
 );
--- rollback DROP TABLE abonement;
 
 CREATE TABLE IF NOT EXISTS lesson
 (
@@ -103,7 +95,6 @@ CREATE TABLE IF NOT EXISTS lesson
     description VARCHAR(128),
     cost        NUMERIC(10, 2)
 );
---rollback DROP TABLE lesson;
 
 CREATE TABLE IF NOT EXISTS comment
 (
@@ -113,7 +104,6 @@ CREATE TABLE IF NOT EXISTS comment
     added_at  TIMESTAMP(0) NOT NULL,
     PRIMARY KEY (text, added_at)
 );
--- rollback DROP TABLE comment;
 
 CREATE TABLE IF NOT EXISTS teacher_subject
 (
@@ -121,7 +111,6 @@ CREATE TABLE IF NOT EXISTS teacher_subject
     subject_id INT REFERENCES subject (id) ON DELETE CASCADE,
     PRIMARY KEY (teacher_id, subject_id)
 );
---rollback DROP TABLE teachers_subject;
 
 CREATE TABLE IF NOT EXISTS salary_log
 (
@@ -132,7 +121,6 @@ CREATE TABLE IF NOT EXISTS salary_log
     admin_id   INT REFERENCES admin (id)
 );
 
---rollback DROP TABLE salary_log;
 CREATE TABLE IF NOT EXISTS task
 (
     id                INT AUTO_INCREMENT PRIMARY KEY,
@@ -150,4 +138,3 @@ CREATE TABLE IF NOT EXISTS student_lesson
     lesson_id  INT REFERENCES lesson (id),
     PRIMARY KEY (student_id, lesson_id)
 );
---rollback DROP TABLE student_lesson;
