@@ -3,7 +3,7 @@ package ru.crm.system.integration.service;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.crm.system.dto.admin.AdminCreateEditDto;
-import ru.crm.system.integration.IT;
+import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.AdminService;
 
 import java.math.BigDecimal;
@@ -11,9 +11,8 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@IT
 @RequiredArgsConstructor
-public class AdminServiceIT {
+public class AdminServiceIT extends IntegrationTestBase {
 
     private static final Integer EXISTING_ADMIN_ID = 1;
 

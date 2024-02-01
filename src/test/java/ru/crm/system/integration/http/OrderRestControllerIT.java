@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.crm.system.database.entity.enums.OrderStatus;
 import ru.crm.system.exception.NotFoundException;
 import ru.crm.system.http.rest.OrderRestController;
-import ru.crm.system.integration.IT;
+import ru.crm.system.integration.IntegrationTestBase;
 
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,10 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@IT
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
-public class OrderRestControllerIT {
+public class OrderRestControllerIT extends IntegrationTestBase {
 
     private static final String BASE_ORDER_URL = "/api/v1/orders/";
     private static final Integer EXISTING_ORDER_ID = 1;

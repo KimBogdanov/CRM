@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.crm.system.dto.admin.AdminCreateEditDto;
 import ru.crm.system.http.rest.AdminRestController;
-import ru.crm.system.integration.IT;
+import ru.crm.system.integration.IntegrationTestBase;
 
 import java.math.BigDecimal;
 
@@ -22,10 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@IT
 @RequiredArgsConstructor
 @AutoConfigureMockMvc
-public class AdminRestControllerIT {
+public class AdminRestControllerIT extends IntegrationTestBase {
 
     private static final String BASE_ADMIN_URL = "/api/v1/admins/";
     private static final Integer EXISTING_ADMIN_ID = 1;
