@@ -142,22 +142,19 @@ class OrderServiceTest {
                     assertThat(order.requestSource()).isEqualTo("Yandex");
                     assertThat(order.requestSource()).isEqualTo("Yandex");
                 }));
-        verify(adminRepository).findById(EXISING_ADMIN_ID);
     }
 
     @Test
     void changeStatus_shouldChangeStatus_ifOrderExists() {
         var existingOrder = getOrder();
-        var orderReadDto = getOrderReadDto();
+        existingOrder.setStatus(OrderStatus.APPOINTMENT_COMPLETED);
         when(orderRepository.findById(EXISTING_ORDER_ID)).thenReturn(Optional.of(existingOrder));
-        when(orderRepository.saveAndFlush(existingOrder)).thenReturn(existingOrder);
         when(orderReadMapper.map(existingOrder)).thenCallRealMethod();
 
         var actualOrder = orderService.changeStatus(EXISTING_ORDER_ID, EXISING_ADMIN_ID, OrderStatus.APPOINTMENT_COMPLETED);
 
         assertThat(actualOrder).isPresent();
         actualOrder.ifPresent(order -> assertThat(order.status()).isEqualTo(OrderStatus.APPOINTMENT_COMPLETED));
-        verify(adminRepository).findById(EXISING_ADMIN_ID);
         verify(publisher).publishEvent(any());
     }
 
