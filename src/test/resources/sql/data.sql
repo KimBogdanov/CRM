@@ -33,10 +33,10 @@ VALUES (1, 4, 4000, 'INDIVIDUAL', '2023-12-10', '2023-12-31', 'ACTIVE', 1),
        (5, 4, 4000, 'INDIVIDUAL', '2023-12-10', '2023-12-31', 'ACTIVE', 5);
 
 INSERT INTO teacher(id, first_name, last_name, phone, email, password, role, avatar, salary_per_hour, status, pay_ratio)
-VALUES (1, 'Наталья', 'Петрова', '8-88-88-88-8', 'natalya@Gmail.com', '123', 'TEACHER', 900, 'ACTIVE', 'natalya.jpg',
+VALUES (1, 'Наталья', 'Петрова', '8-88-88-88-8', 'natalya@Gmail.com', '123', 'TEACHER', 'natalya.jpg', 900, 'ACTIVE',
         0.75),
-       (2, 'Мария', 'Иванова', '8-88-88-88-9', 'mariay@Gmail.com', '123', 'TEACHER', 800, 'ACTIVE', 'mariya.jpg', 0.7),
-       (3, 'Антон', 'Попов', '8-88-88-99-8', 'anton@Gmail.com', '123', 'TEACHER', 1000, 'ACTIVE', 'anton.jpg', 0.8);
+       (2, 'Мария', 'Иванова', '8-88-88-88-9', 'mariay@Gmail.com', '123', 'TEACHER', 'mariya.jpg', 800, 'ACTIVE', 0.7),
+       (3, 'Антон', 'Попов', '8-88-88-99-8', 'anton@Gmail.com', '123', 'TEACHER', 'anton.jpg', 1000, 'ACTIVE', 0.8);
 
 INSERT INTO lesson(id, teacher_id, date, time, duration, subject_id, status, pay_type, lesson_type, description, cost)
 VALUES (1, 1, '2023-12-10', '10:00', 45, 1, 'APPOINTED', 'FREE', 'INDIVIDUAL', 'description of lesson', 450),
