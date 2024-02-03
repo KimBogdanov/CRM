@@ -3,6 +3,7 @@ package ru.crm.system.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.crm.system.database.entity.Subject;
 import ru.crm.system.database.repository.TeacherRepository;
 import ru.crm.system.dto.teacher.TeacherCreateEditDto;
 import ru.crm.system.dto.teacher.TeacherReadDto;
@@ -37,6 +38,12 @@ public class TeacherService {
 
     public List<TeacherReadDto> findAll() {
         return teacherRepository.findAll().stream()
+                .map(teacherReadMapper::map)
+                .toList();
+    }
+
+    public List<TeacherReadDto> getAllBySubject(Subject subject) {
+        return teacherRepository.findAllBySubject(subject).stream()
                 .map(teacherReadMapper::map)
                 .toList();
     }
