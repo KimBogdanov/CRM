@@ -19,6 +19,7 @@
         <java.version>17</java.version>
         <springdoc.version>1.6.12</springdoc.version>
         <testcontainers.mysql>1.19.4</testcontainers.mysql>
+        <log4jdbc.version>2.0.0</log4jdbc.version>
     </properties>
     <dependencies>
         <dependency>
@@ -52,6 +53,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.integralblue</groupId>
+            <artifactId>log4jdbc-spring-boot-starter</artifactId>
+            <version>${log4jdbc.version}</version>
         </dependency>
 
         <!--		test scope-->
