@@ -122,11 +122,10 @@ CREATE TABLE IF NOT EXISTS salary_log
 
 CREATE TABLE IF NOT EXISTS task
 (
-    id                LONG AUTO_INCREMENT PRIMARY KEY,
-    object_type       VARCHAR(64),
-    object_id         LONG,
-    description       VARCHAR(64) NOT NULL,
-    created_date_time TIMESTAMP   NOT NULL,
-    end_date_time     TIMESTAMP   NOT NULL,
-    task_Type         VARCHAR(64) NOT NULL
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    nested_object_id    INT,
+    description         VARCHAR(255) NOT NULL,
+    end_date_time       TIMESTAMP   NOT NULL,
+    object_nested_task  VARCHAR(64) NOT NULL,
+    task_status         VARCHAR(32) NOT NULL
 );
