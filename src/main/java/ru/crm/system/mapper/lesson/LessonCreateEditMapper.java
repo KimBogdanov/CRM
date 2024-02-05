@@ -3,7 +3,6 @@ package ru.crm.system.mapper.lesson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Lesson;
-import ru.crm.system.database.entity.Student;
 import ru.crm.system.database.entity.Subject;
 import ru.crm.system.database.entity.Teacher;
 import ru.crm.system.database.entity.enums.LessonStatus;
@@ -24,9 +23,6 @@ public class LessonCreateEditMapper implements Mapper<LessonCreateEditDto, Lesso
     private final TeacherRepository teacherRepository;
     private final SubjectRepository subjectRepository;
 
-    /**
-     * Метод для маппинга из Create dto в сущность Lesson при создании нового урока.
-     */
     @Override
     public Lesson map(LessonCreateEditDto createDto) {
         var lesson = new Lesson();
@@ -35,46 +31,38 @@ public class LessonCreateEditMapper implements Mapper<LessonCreateEditDto, Lesso
         return lesson;
     }
 
-    /**
-     * Метод для обновления существующей сущности из переданного Edit dto.
-     * Используется в методе update в {@link ru.crm.system.service.LessonService}
-     */
     @Override
-    public Lesson map(LessonCreateEditDto from, Lesson to) {
-        copyFromDtoToLesson(from, to);
-        to.setStatus(from.status());
-        return to;
-    }
-
-    private Student getStudent(Integer id) {
-        return Optional.ofNullable(id)
-                .flatMap(studentRepository::findById)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Студент с номером %d не найден в базе.", id)));
-    }
-
-    private Teacher getTeacher(Integer id) {
-        return Optional.ofNullable(id)
-                .flatMap(teacherRepository::findById)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Учитель с номером %d не найден в базе.", id)));
-    }
-
-    private Subject getSubject(Integer id) {
-        return Optional.ofNullable(id)
-                .flatMap(subjectRepository::findById)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Предмет с номером %d не найден в базе.", id)));
+    public Lesson map(LessonCreateEditDto editDto, Lesson entity) {
+        copyFromDtoToLesson(editDto, entity);
+        entity.setStatus(editDto.status());
+        return entity;
     }
 
     private void copyFromDtoToLesson(LessonCreateEditDto createEditDto, Lesson lesson) {
-        lesson.setStudent(getStudent(createEditDto.studentId()));
-        lesson.setTeacher(getTeacher(createEditDto.teacherId()));
-        lesson.setDateTime(createEditDto.lessonDateTime());
+        var students = studentRepository.findAllByFullNames(createEditDto.studentFullNames());
+        lesson.setStudents(students);
+        lesson.setTeacher(getTeacher(createEditDto.teacherFullName()));
+        lesson.setDate(createEditDto.date());
+        lesson.setTime(createEditDto.time());
         lesson.setDuration(createEditDto.duration());
-        lesson.setSubject(getSubject(createEditDto.subjectId()));
-        lesson.setType(createEditDto.type());
+        lesson.setSubject(getSubject(createEditDto.subject().getName()));
+        lesson.setPayType(createEditDto.payType());
+        lesson.setLessonType(createEditDto.type());
         lesson.setDescription(createEditDto.description());
         lesson.setCost(createEditDto.cost());
+    }
+
+    private Teacher getTeacher(String teacherFullName) {
+        return Optional.of(teacherFullName)
+                .flatMap(teacherRepository::findByFullName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Учитель %s не найден в базе.", teacherFullName)));
+    }
+
+    private Subject getSubject(String subject) {
+        return Optional.ofNullable(subject)
+                .flatMap(subjectRepository::getSubjectByName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Предмет %s не найден в базе.", subject)));
     }
 }
