@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.crm.system.database.entity.Lesson;
+import ru.crm.system.database.entity.Student;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.repository.AbonementRepository;
 import ru.crm.system.database.repository.LessonRepository;
@@ -15,11 +17,15 @@ import ru.crm.system.listener.entity.EntityEvent;
 import ru.crm.system.mapper.lesson.LessonCreateEditMapper;
 import ru.crm.system.mapper.lesson.LessonReadMapper;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Validated(value = LessonCreateEditDto.class)
 public class LessonService {
 
     private final LessonRepository lessonRepository;
@@ -30,14 +36,24 @@ public class LessonService {
     private final LogInfoService logInfoService;
     private final SalaryService salaryService;
     private final CommentService commentService;
+    private final Validator validator;
 
     @Transactional
-    public LessonReadDto create(LessonCreateEditDto createDto, Integer adminId) {
+    public LessonReadDto create(LessonCreateEditDto createDto) {
+        var violations = validator.validate(createDto);
+        if (!violations.isEmpty()) {
+            var violationMessages = new StringBuilder();
+            for (ConstraintViolation<LessonCreateEditDto> violation : violations) {
+                violationMessages.append(violation.getMessage());
+            }
+            throw new ConstraintViolationException(violationMessages.toString(), violations);
+        }
+
         return Optional.of(createDto)
                 .map(lessonCreateEditMapper::map)
                 .map(lessonRepository::save)
                 .map(lesson -> {
-                    var logInfo = logInfoService.createLogInfoWhenLessonAppointed(adminId, lesson);
+                    var logInfo = logInfoService.createLogInfoWhenLessonAppointed(lesson);
                     publisher.publishEvent(new EntityEvent<>(lesson, AccessType.CREATE, logInfo));
                     return lesson;
                 })
@@ -111,26 +127,38 @@ public class LessonService {
     }
 
     private void writeOffMoneyFromStudentBalance(Lesson lesson) {
-        var currentBalanceOnAbonement = lesson.getStudent().getAbonement().getBalance();
-        if (currentBalanceOnAbonement.doubleValue() > 0) {
-            var lessonCost = lesson.getCost();
-            var subtractedBalance = currentBalanceOnAbonement.subtract(lessonCost);
-            if (subtractedBalance.doubleValue() > 0) {
-                lesson.getStudent().getAbonement().setBalance(subtractedBalance);
+        var lessonStudents = lesson.getStudents().stream().toList();
+        for (Student student : lessonStudents) {
+            var studentBalance = student.getAbonement().getBalance();
+            if (studentBalance.doubleValue() > 0) {
+                var lessonCost = lesson.getCost();
+                var balanceAfterLesson = studentBalance.subtract(lessonCost);
+                if (balanceAfterLesson.doubleValue() > 0) {
+                    student.getAbonement().setBalance(studentBalance);
+                } else {
+                    throw new RuntimeException(String.format("У студента %s %s недостаточно денег для оплаты урока.",
+                            student.getUserInfo().getFirstName(),
+                            student.getUserInfo().getLastName()));
+                }
             } else {
-                throw new RuntimeException("Недостаточно денег на балансе");
+                throw new RuntimeException(String.format("У студента %s %s недостаточно денег для оплаты урока.",
+                        student.getUserInfo().getFirstName(),
+                        student.getUserInfo().getLastName()));
             }
-        } else {
-            throw new RuntimeException("Недостаточно денег на балансе");
         }
     }
 
     private void subtractOneLessonFromAbonement(Lesson lesson) {
-        var currentNumberOfLessons = lesson.getStudent().getAbonement().getNumberOfLessons();
-        if (currentNumberOfLessons > 0) {
-            lesson.getStudent().getAbonement().setNumberOfLessons(currentNumberOfLessons - 1);
-        } else {
-            throw new RuntimeException("Необходимо пополнить абонемент");
+        var lessonStudents = lesson.getStudents().stream().toList();
+        for (Student student : lessonStudents) {
+            var currentNumberOfLessons = student.getAbonement().getNumberOfLessons();
+            if (currentNumberOfLessons > 0) {
+                student.getAbonement().setNumberOfLessons(currentNumberOfLessons - 1);
+            } else {
+                throw new RuntimeException(String.format("У ученика %s %s количество уроков в абонементе = 0",
+                        student.getUserInfo().getFirstName(),
+                        student.getUserInfo().getLastName()));
+            }
         }
     }
 
