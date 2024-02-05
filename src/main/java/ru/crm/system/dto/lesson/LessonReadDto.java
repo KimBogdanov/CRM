@@ -12,7 +12,7 @@ import java.util.List;
 
 @Builder
 public record LessonReadDto(Integer id,
-                            List<String> studentName,
+                            List<String> studentFullNames,
                             String teacherFullName,
                             LocalDate lessonDate,
                             LocalTime lessonTime,

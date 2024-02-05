@@ -14,7 +14,7 @@ public class LessonReadMapper implements Mapper<Lesson, LessonReadDto> {
     public LessonReadDto map(Lesson entity) {
         return LessonReadDto.builder()
                 .id(entity.getId())
-                .studentName(getStudentFullNames(entity))
+                .studentFullNames(getStudentFullNames(entity))
                 .teacherFullName(getFullTeacherName(entity))
                 .lessonDate(entity.getDate())
                 .lessonTime(entity.getTime())
