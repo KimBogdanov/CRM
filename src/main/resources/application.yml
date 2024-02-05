@@ -6,7 +6,7 @@ spring:
     url: jdbc:mysql://localhost:3306/crm
     username: root
     password: mysql
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
     open-in-view: false
@@ -16,6 +16,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
+        type: trace
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
     database-platform: org.hibernate.dialect.MySQLDialect
@@ -27,3 +28,8 @@ my-app:
     no-image-available: \src\main\resources\images\NoImageAvailable.jpg
 server:
   port: 8080
+logging:
+  level:
+    root: info
+    jdbc:
+      sqlonly: DEBUG
