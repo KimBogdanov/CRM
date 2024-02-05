@@ -39,7 +39,7 @@ public class LessonService {
     private final Validator validator;
 
     @Transactional
-    public LessonReadDto create(LessonCreateEditDto createDto) {
+    public Optional<LessonReadDto> create(LessonCreateEditDto createDto) {
         var violations = validator.validate(createDto);
         if (!violations.isEmpty()) {
             var violationMessages = new StringBuilder();
@@ -57,8 +57,7 @@ public class LessonService {
                     publisher.publishEvent(new EntityEvent<>(lesson, AccessType.CREATE, logInfo));
                     return lesson;
                 })
-                .map(lessonReadMapper::map)
-                .orElseThrow();
+                .map(lessonReadMapper::map);
     }
 
     @Transactional
