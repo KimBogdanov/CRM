@@ -19,8 +19,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -35,11 +38,14 @@ import static javax.persistence.CascadeType.PERSIST;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(exclude = {"students", "teacher"}, callSuper = true)
-@ToString(exclude = {"students", "teacher", "subject", "comments"}, callSuper = true)
+@ToString(exclude = {"students", "teacher", "subject", "comments", "logInfos"}, callSuper = true)
 @Entity
 public class Lesson extends AbstractEntity {
 
-    @ManyToMany(mappedBy = "lessons", cascade = {PERSIST, MERGE})
+    @ManyToMany(cascade = {PERSIST, MERGE})
+    @JoinTable(name = "student_lesson",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> students;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -72,6 +78,10 @@ public class Lesson extends AbstractEntity {
     @ElementCollection
     @CollectionTable(name = "comment")
     private List<Comment> comments = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "lesson")
+    private List<LogInfo> logInfos = new ArrayList<>();
 
     public void addComment(Comment comment) {
         comments.add(comment);

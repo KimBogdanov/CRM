@@ -66,7 +66,8 @@ CREATE TABLE IF NOT EXISTS log_info
     admin_id    INT REFERENCES admin (id),
     order_id    INT REFERENCES orders (id),
     student_id  INT REFERENCES student (id),
-    teacher_id  INT REFERENCES teacher (id)
+    teacher_id  INT REFERENCES teacher (id),
+    lesson_id   INT REFERENCES lesson (id)
 );
 
 CREATE TABLE IF NOT EXISTS abonement
