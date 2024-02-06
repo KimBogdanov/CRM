@@ -5,7 +5,9 @@ import ru.crm.system.database.entity.Subject;
 import ru.crm.system.database.entity.enums.LessonPayType;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.entity.enums.LessonType;
+import ru.crm.system.validation.CheckSameDataAndTime;
 
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -15,6 +17,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Builder
+@CheckSameDataAndTime
 public record LessonCreateEditDto(
 
         @NotEmpty(message = "{lesson.student_empty_list}")
@@ -24,6 +27,7 @@ public record LessonCreateEditDto(
         String teacherFullName,
 
         @NotNull(message = "{lesson.date_empty}")
+        @FutureOrPresent(message = "{lesson.data_future_or_present}")
         LocalDate date,
 
         @NotNull(message = "{lesson.time_empty}")
