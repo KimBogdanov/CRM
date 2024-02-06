@@ -27,7 +27,7 @@ import static javax.persistence.CascadeType.PERSIST;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(of = "userInfo", callSuper = true)
-@ToString(exclude = {"subject", "lessons", "logInfos"}, callSuper = true)
+@ToString(exclude = {"subject", "lessons", "logInfos", "abonement"}, callSuper = true)
 @Entity
 public class Student  extends AbstractEntity {
 

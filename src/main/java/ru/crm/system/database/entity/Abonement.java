@@ -24,7 +24,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(exclude = {"id", "type"}, callSuper = true)
-@ToString(exclude = {"id", "type"}, callSuper = true)
+@ToString(exclude = {"id", "type", "student"}, callSuper = true)
 @Entity
 public class Abonement extends AbstractEntity {
 
