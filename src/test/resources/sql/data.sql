@@ -39,7 +39,7 @@ VALUES (1, 'Наталья', 'Петрова', '8-88-88-88-8', 'natalya@Gmail.co
        (3, 'Антон', 'Попов', '8-88-88-99-8', 'anton@Gmail.com', '123', 'TEACHER', 'anton.jpg', 1000, 'ACTIVE', 0.8);
 
 INSERT INTO lesson(id, teacher_id, date, time, duration, subject_id, status, pay_type, lesson_type, description, cost)
-VALUES (1, 1, '2023-12-10', '10:00', 45, 1, 'APPOINTED', 'FREE', 'INDIVIDUAL', 'description of lesson', 450),
+VALUES (1, 1, '2023-12-10', '10:00', 45, 1, 'APPOINTED', 'PAID', 'GROUP', 'description of lesson', 450),
        (2, 2, '2023-12-10', '10:15', 45, 2, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 450),
        (3, 3, '2023-12-10', '11:00', 45, 3, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 450),
        (4, 3, '2023-12-10', '11:45', 45, 4, 'APPOINTED', 'PAID', 'INDIVIDUAL', 'description of lesson', 600),
