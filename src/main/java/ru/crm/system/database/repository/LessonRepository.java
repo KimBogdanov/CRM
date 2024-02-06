@@ -1,17 +1,19 @@
 package ru.crm.system.database.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import ru.crm.system.database.entity.Lesson;
-import ru.crm.system.database.entity.enums.LessonStatus;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Optional;
 
 public interface LessonRepository extends JpaRepository<Lesson, Integer> {
 
-    @Modifying
     @Query("""
-            update Lesson l
-            set l.status = :status
+            select l
+            from Lesson l
+            where l.date = :date and l.time = :time
             """)
-    void changeLessonStatus(LessonStatus status);
+    Optional<Lesson> findByDataAndTime(LocalDate date, LocalTime time);
 }
