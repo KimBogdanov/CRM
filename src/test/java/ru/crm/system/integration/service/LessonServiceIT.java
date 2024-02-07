@@ -10,6 +10,7 @@ import ru.crm.system.dto.lesson.LessonCreateEditDto;
 import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.LessonService;
 
+import javax.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RequiredArgsConstructor
 public class LessonServiceIT extends IntegrationTestBase {
@@ -46,6 +48,14 @@ public class LessonServiceIT extends IntegrationTestBase {
                 }));
     }
 
+    @Test
+    void create_shouldThrowValidationExceptions() {
+        var lessonCreateDto = getInvalidLessonCreateEditDto();
+        var exception = assertThrows(ConstraintViolationException.class, () -> lessonService.create(lessonCreateDto));
+
+        assertThat(exception.getConstraintViolations()).hasSize(9);
+    }
+
     private LessonCreateEditDto getValidLessonCreateEditDto() {
         return LessonCreateEditDto.builder()
                 .studentFullNames(List.of("Андрей Иванов", "Павел Петров"))
@@ -58,6 +68,11 @@ public class LessonServiceIT extends IntegrationTestBase {
                 .payType(LessonPayType.PAID)
                 .description("Первый урок по вокалу")
                 .cost(BigDecimal.valueOf(800))
+                .build();
+    }
+
+    private LessonCreateEditDto getInvalidLessonCreateEditDto() {
+        return LessonCreateEditDto.builder()
                 .build();
     }
 }
