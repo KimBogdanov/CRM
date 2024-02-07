@@ -3,11 +3,13 @@ package ru.crm.system.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.crm.system.database.entity.Admin;
+import ru.crm.system.database.entity.Lesson;
 import ru.crm.system.database.entity.LogInfo;
 import ru.crm.system.database.entity.Order;
 import ru.crm.system.database.entity.Student;
 import ru.crm.system.database.entity.Teacher;
 import ru.crm.system.database.repository.AdminRepository;
+import ru.crm.system.database.repository.LessonRepository;
 import ru.crm.system.database.repository.OrderRepository;
 import ru.crm.system.database.repository.StudentRepository;
 import ru.crm.system.database.repository.TeacherRepository;
@@ -23,6 +25,7 @@ public class LogInfoCreateMapper implements Mapper<LogInfoCreateDto, LogInfo> {
     private final AdminRepository adminRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final LessonRepository lessonRepository;
 
     @Override
     public LogInfo map(LogInfoCreateDto createDto) {
@@ -34,6 +37,7 @@ public class LogInfoCreateMapper implements Mapper<LogInfoCreateDto, LogInfo> {
                 .admin(getAdmin(createDto.getAdminId()))
                 .student(getStudent(createDto.getStudentId()))
                 .teacher(getTeacher(createDto.getTeacherId()))
+                .lesson(getLesson(createDto.getLessonId()))
                 .build();
     }
 
@@ -58,6 +62,12 @@ public class LogInfoCreateMapper implements Mapper<LogInfoCreateDto, LogInfo> {
     private Teacher getTeacher(Integer id) {
         return Optional.ofNullable(id)
                 .flatMap(teacherRepository::findById)
+                .orElse(null);
+    }
+
+    private Lesson getLesson(Integer id) {
+        return Optional.ofNullable(id)
+                .flatMap(lessonRepository::findById)
                 .orElse(null);
     }
 }
