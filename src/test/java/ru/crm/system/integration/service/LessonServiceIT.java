@@ -10,6 +10,7 @@ import ru.crm.system.dto.lesson.LessonCreateEditDto;
 import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.LessonService;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -56,6 +57,16 @@ public class LessonServiceIT extends IntegrationTestBase {
         assertThat(exception.getConstraintViolations()).hasSize(9);
     }
 
+    @Test
+    void create_shouldThrowValidationException_ifThereIsLessonInPastAndWithSameDataAndTime() {
+        var lessonCreateDto = getLessonCreateEditDtoInPastWithTheSameDataAndTime();
+        var exception = assertThrows(ConstraintViolationException.class, () -> lessonService.create(lessonCreateDto));
+        var messages = exception.getConstraintViolations().stream().map(ConstraintViolation::getMessage).toList();
+
+        assertThat(messages).hasSize(2);
+        assertThat(messages).contains("На выбранную дату и время уже назначен урок.", "Дата проведения урока указана не верно.");
+    }
+
     private LessonCreateEditDto getValidLessonCreateEditDto() {
         return LessonCreateEditDto.builder()
                 .studentFullNames(List.of("Андрей Иванов", "Павел Петров"))
@@ -73,6 +84,21 @@ public class LessonServiceIT extends IntegrationTestBase {
 
     private LessonCreateEditDto getInvalidLessonCreateEditDto() {
         return LessonCreateEditDto.builder()
+                .build();
+    }
+
+    private LessonCreateEditDto getLessonCreateEditDtoInPastWithTheSameDataAndTime() {
+        return LessonCreateEditDto.builder()
+                .studentFullNames(List.of("Андрей Иванов", "Павел Петров"))
+                .teacherFullName("Наталья Петрова")
+                .date(LocalDate.of(2023, 12, 10))
+                .time(LocalTime.of(10, 0))
+                .duration(45)
+                .subject(Subject.builder().name("Вокал").build())
+                .type(LessonType.GROUP)
+                .payType(LessonPayType.PAID)
+                .description("Первый урок по вокалу")
+                .cost(BigDecimal.valueOf(800))
                 .build();
     }
 }
