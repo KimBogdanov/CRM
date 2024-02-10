@@ -6,6 +6,7 @@ import ru.crm.system.database.entity.Subject;
 import ru.crm.system.database.entity.enums.LessonPayType;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.entity.enums.LessonType;
+import ru.crm.system.database.repository.LogInfoRepository;
 import ru.crm.system.dto.lesson.LessonCreateEditDto;
 import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.LessonService;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class LessonServiceIT extends IntegrationTestBase {
 
     private final LessonService lessonService;
+    private final LogInfoRepository logInfoRepository;
 
     @Test
     void create_shouldCreateNewLesson_whenCreateDtoValid() {
@@ -65,6 +67,22 @@ public class LessonServiceIT extends IntegrationTestBase {
 
         assertThat(messages).hasSize(2);
         assertThat(messages).contains("На выбранную дату и время уже назначен урок.", "Дата проведения урока указана не верно.");
+    }
+
+    @Test
+    void create_shouldCreateLessonLogInfo_whenCreatingNewLesson() {
+        var logInfos = logInfoRepository.findAll();
+        assertThat(logInfos).isEmpty();
+
+        var lessonCreateDto = getValidLessonCreateEditDto();
+        var createdLesson = lessonService.create(lessonCreateDto);
+
+        createdLesson.ifPresent(lesson -> {
+            var logInfosByLesson = logInfoRepository.findByLessonId(lesson.id());
+            assertThat(logInfosByLesson).hasSize(1);
+            var lessonIdAtLogInfo = logInfosByLesson.stream().map(logInfo -> logInfo.getLesson().getId()).findFirst();
+            lessonIdAtLogInfo.ifPresent(id -> assertThat(id).isEqualTo(lesson.id()));
+        });
     }
 
     private LessonCreateEditDto getValidLessonCreateEditDto() {
