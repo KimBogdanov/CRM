@@ -20,6 +20,7 @@
         <springdoc.version>1.6.12</springdoc.version>
         <testcontainers.mysql>1.19.4</testcontainers.mysql>
         <log4jdbc.version>2.0.0</log4jdbc.version>
+        <jpamodelgen.version>5.6.15.Final</jpamodelgen.version>
     </properties>
     <dependencies>
         <dependency>
@@ -59,6 +60,12 @@
             <artifactId>log4jdbc-spring-boot-starter</artifactId>
             <version>${log4jdbc.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${jpamodelgen.version}</version>
+            <optional>true</optional>
+        </dependency>
 
         <!--		test scope-->
         <dependency>
@@ -84,6 +91,13 @@
                     <image>
                         <builder>paketobuildpacks/builder-jammy-base:latest</builder>
                     </image>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
         </plugins>
