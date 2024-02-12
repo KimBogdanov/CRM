@@ -2,6 +2,9 @@ package ru.crm.system.integration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import ru.crm.system.database.entity.Lesson;
 import ru.crm.system.database.entity.Student;
 import ru.crm.system.database.entity.Subject;
@@ -13,12 +16,14 @@ import ru.crm.system.database.entity.enums.LessonType;
 import ru.crm.system.database.entity.enums.Role;
 import ru.crm.system.database.entity.enums.TeacherStatus;
 import ru.crm.system.database.repository.LessonRepository;
+import ru.crm.system.dto.filter.LessonFilter;
 import ru.crm.system.integration.IntegrationTestBase;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -82,6 +87,26 @@ public class LessonRepositoryIT extends IntegrationTestBase {
         var modifiedLesson = lessonRepository.findById(savedLesson.getId());
 
         modifiedLesson.ifPresent(lesson -> assertThat(lesson.getModifiedAt()).isNotNull());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getArgumentsForFindAllByFilter")
+    void findAllByFilter_shouldFindLessonsByFilter(LessonFilter filter, int expectedNumberOfLesson) {
+        var actualLessons = lessonRepository.findAllByFilter(filter);
+
+        assertThat(actualLessons).hasSize(expectedNumberOfLesson);
+    }
+
+    static Stream<Arguments> getArgumentsForFindAllByFilter() {
+        return Stream.of(
+                Arguments.of(LessonFilter.builder().from(LocalDate.of(2023, 12, 10))
+                        .to(LocalDate.of(2023, 12, 10))
+                        .build(), 9),
+                Arguments.of(LessonFilter.builder()
+                        .from(LocalDate.of(2023, 12, 10))
+                        .to(LocalDate.of(2024, 2, 14))
+                        .build(), 14)
+        );
     }
 
     private Lesson getLesson() {
