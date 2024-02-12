@@ -48,7 +48,7 @@ public class Lesson extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> students;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = PERSIST)
     private Teacher teacher;
 
     private LocalDate date;
@@ -57,7 +57,7 @@ public class Lesson extends AbstractEntity {
 
     private Integer duration;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = PERSIST)
     private Subject subject;
 
     @Enumerated(EnumType.STRING)
