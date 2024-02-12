@@ -74,7 +74,7 @@ public class LessonService {
                                                       LessonStatus status) {
         return lessonRepository.findById(lessonId)
                 .map(lesson -> {
-                    lessonRepository.changeLessonStatus(status);
+                    lesson.setStatus(status);
                     lessonRepository.flush();
                     switch (status) {
                         case SUCCESSFULLY_FINISHED -> jobInCaseLessonFinishedSuccessfully(lesson);
