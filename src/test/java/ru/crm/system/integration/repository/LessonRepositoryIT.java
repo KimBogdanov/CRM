@@ -17,11 +17,14 @@ import ru.crm.system.database.entity.enums.Role;
 import ru.crm.system.database.entity.enums.TeacherStatus;
 import ru.crm.system.database.repository.LessonRepository;
 import ru.crm.system.dto.filter.LessonFilter;
+import ru.crm.system.dto.filter.MonthSchedule;
 import ru.crm.system.integration.IntegrationTestBase;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -91,7 +94,7 @@ public class LessonRepositoryIT extends IntegrationTestBase {
 
     @ParameterizedTest
     @MethodSource("getArgumentsForFindAllByFilter")
-    void findAllByFilter_shouldFindLessonsByFilter(LessonFilter filter, int expectedNumberOfLesson) {
+    void findAllByFilter_shouldFindLessonsByDateFilter(LessonFilter filter, int expectedNumberOfLesson) {
         var actualLessons = lessonRepository.findAllByFilter(filter);
 
         assertThat(actualLessons).hasSize(expectedNumberOfLesson);
@@ -107,6 +110,19 @@ public class LessonRepositoryIT extends IntegrationTestBase {
                         .to(LocalDate.of(2024, 2, 14))
                         .build(), 14)
         );
+    }
+
+    @Test
+    void findAllByFilter_shouldFindLessonsByMonthFilter() {
+        var lesson = getLesson();
+        lesson.setDate(LocalDate.of(Year.now().getValue(), Month.MAY.getValue(), 10));
+
+        lessonRepository.save(lesson);
+        var currentMayFilter = LessonFilter.builder().month(MonthSchedule.MAY).build();
+
+        var actualLessons = lessonRepository.findAllByFilter(currentMayFilter);
+
+        assertThat(actualLessons).hasSize(1);
     }
 
     private Lesson getLesson() {
