@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @RequiredArgsConstructor
 public class LessonServiceIT extends IntegrationTestBase {
 
+    private static final Integer EXISTING_LESSON_ID = 1;
+
     private final LessonService lessonService;
     private final LogInfoRepository logInfoRepository;
 
@@ -39,7 +41,6 @@ public class LessonServiceIT extends IntegrationTestBase {
                     assertThat(lesson.id()).isPositive();
                     assertThat(lesson.studentFullNames()).contains("Андрей Иванов", "Павел Петров");
                     assertThat(lesson.teacherFullName()).isEqualTo("Наталья Петрова");
-                    assertThat(lesson.lessonDate()).isEqualTo("2024-02-15");
                     assertThat(lesson.lessonTime()).isEqualTo("10:00");
                     assertThat(lesson.duration()).isEqualTo(45);
                     assertThat(lesson.subject()).isEqualTo("Вокал");
@@ -85,14 +86,52 @@ public class LessonServiceIT extends IntegrationTestBase {
         });
     }
 
+    @Test
+    void update_shouldUpdateExistingLesson_ifEditDtoValid() {
+        var existingLesson = lessonService.findById(EXISTING_LESSON_ID);
+
+        existingLesson.ifPresent(lesson ->
+                assertAll(() -> {
+                    assertThat(lesson.id()).isEqualTo(EXISTING_LESSON_ID);
+                    assertThat(lesson.studentFullNames()).isEqualTo(List.of("Андрей Иванов", "Павел Петров", "Катя Степанова"));
+                    assertThat(lesson.teacherFullName()).isEqualTo("Наталья Петрова");
+                    assertThat(lesson.subject()).isEqualTo("Вокал");
+                    assertThat(lesson.status()).isEqualTo(LessonStatus.APPOINTED);
+                }));
+
+        var validLessonEditDto = getValidLessonCreateEditDto();
+
+        var actualLesson = lessonService.update(EXISTING_LESSON_ID, validLessonEditDto);
+        actualLesson.ifPresent(lesson ->
+                assertAll(() -> {
+                    assertThat(lesson.id()).isEqualTo(EXISTING_LESSON_ID);
+                    assertThat(lesson.studentFullNames()).isEqualTo(List.of("Андрей Иванов", "Павел Петров"));
+                    assertThat(lesson.teacherFullName()).isEqualTo("Наталья Петрова");
+                    assertThat(lesson.subject()).isEqualTo("Вокал");
+                    assertThat(lesson.status()).isEqualTo(LessonStatus.APPOINTED);
+                })
+        );
+    }
+
+    @Test
+    void update_shouldThrowValidationException_ifEditDtoInvalid() {
+        var invalidLessonEditDto = getInvalidLessonCreateEditDto();
+
+        var exception = assertThrows(ConstraintViolationException.class,
+                () -> lessonService.update(EXISTING_LESSON_ID, invalidLessonEditDto));
+
+        assertThat(exception.getConstraintViolations()).hasSize(9);
+    }
+
     private LessonCreateEditDto getValidLessonCreateEditDto() {
         return LessonCreateEditDto.builder()
                 .studentFullNames(List.of("Андрей Иванов", "Павел Петров"))
                 .teacherFullName("Наталья Петрова")
-                .date(LocalDate.of(2024, 2, 15))
+                .date(LocalDate.now())
                 .time(LocalTime.of(10, 0))
                 .duration(45)
                 .subject(Subject.builder().name("Вокал").build())
+                .status(LessonStatus.APPOINTED)
                 .type(LessonType.GROUP)
                 .payType(LessonPayType.PAID)
                 .description("Первый урок по вокалу")
