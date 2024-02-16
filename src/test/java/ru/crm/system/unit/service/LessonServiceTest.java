@@ -29,11 +29,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -92,6 +94,18 @@ public class LessonServiceTest {
         verify(publisher).publishEvent(any());
     }
 
+    @Test
+    void create_shouldThrowValidationException_whenLessonCreateDtoInvalid() {
+        var invalidLessonCreateDto = getInvalidLessonCreateEditDto();
+
+        when(validator.validate(invalidLessonCreateDto)).thenReturn(Set.of());
+
+        var actualLessonReadDto = lessonService.create(invalidLessonCreateDto);
+
+        assertThat(actualLessonReadDto).isEmpty();
+        verifyNoInteractions(publisher, logInfoService);
+    }
+
     private LessonCreateEditDto getValidLessonCreateEditDto() {
         return LessonCreateEditDto.builder()
                 .studentFullNames(List.of("Андрей Иванов", "Павел Петров"))
@@ -126,6 +140,11 @@ public class LessonServiceTest {
                 .payType(LessonPayType.PAID)
                 .description("Первый урок по вокалу")
                 .cost(BigDecimal.valueOf(800))
+                .build();
+    }
+
+    private LessonCreateEditDto getInvalidLessonCreateEditDto() {
+        return LessonCreateEditDto.builder()
                 .build();
     }
 
