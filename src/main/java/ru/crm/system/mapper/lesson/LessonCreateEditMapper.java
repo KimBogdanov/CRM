@@ -34,7 +34,6 @@ public class LessonCreateEditMapper implements Mapper<LessonCreateEditDto, Lesso
     @Override
     public Lesson map(LessonCreateEditDto editDto, Lesson entity) {
         copyFromDtoToLesson(editDto, entity);
-        entity.setStatus(editDto.status());
         return entity;
     }
 
@@ -46,6 +45,7 @@ public class LessonCreateEditMapper implements Mapper<LessonCreateEditDto, Lesso
         lesson.setTime(createEditDto.time());
         lesson.setDuration(createEditDto.duration());
         lesson.setSubject(getSubject(createEditDto.subject().getName()));
+        lesson.setStatus(createEditDto.status());
         lesson.setPayType(createEditDto.payType());
         lesson.setLessonType(createEditDto.type());
         lesson.setDescription(createEditDto.description());
