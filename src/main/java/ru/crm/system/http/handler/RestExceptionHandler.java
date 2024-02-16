@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.crm.system.exception.CreateEntityException;
 import ru.crm.system.exception.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -19,8 +20,13 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<RestErrorResponse> handleException(NotFoundException exception) {
+    public ResponseEntity<RestErrorResponse> handleException(Exception exception) {
         return createErrorResponse(exception, HttpStatus.MULTI_STATUS);
+    }
+
+    @ExceptionHandler(CreateEntityException.class)
+    public ResponseEntity<RestErrorResponse> handleCreateEntityException(CreateEntityException exception) {
+        return createErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<RestErrorResponse> createErrorResponse(Exception exception, HttpStatus status) {
