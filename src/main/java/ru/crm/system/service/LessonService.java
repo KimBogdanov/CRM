@@ -40,14 +40,7 @@ public class LessonService {
 
     @Transactional
     public Optional<LessonReadDto> create(LessonCreateEditDto createDto) {
-        var violations = validator.validate(createDto);
-        if (!violations.isEmpty()) {
-            var violationMessages = new StringBuilder();
-            for (ConstraintViolation<LessonCreateEditDto> violation : violations) {
-                violationMessages.append(violation.getMessage());
-            }
-            throw new ConstraintViolationException(violationMessages.toString(), violations);
-        }
+        validateLessonDto(createDto);
 
         return Optional.of(createDto)
                 .map(lessonCreateEditMapper::map)
@@ -61,12 +54,24 @@ public class LessonService {
     }
 
     @Transactional
-    public Optional<LessonReadDto> update(Integer lessonId,
-                                          LessonCreateEditDto editDto) {
+    public Optional<LessonReadDto> update(Integer lessonId, LessonCreateEditDto editDto) {
+        validateLessonDto(editDto);
+
         return lessonRepository.findById(lessonId)
                 .map(lesson -> lessonCreateEditMapper.map(editDto, lesson))
                 .map(lessonRepository::saveAndFlush)
                 .map(lessonReadMapper::map);
+    }
+
+    private void validateLessonDto(LessonCreateEditDto lessonDto) {
+        var violations = validator.validate(lessonDto);
+        if (!violations.isEmpty()) {
+            var violationMessages = new StringBuilder();
+            for (ConstraintViolation<LessonCreateEditDto> violation : violations) {
+                violationMessages.append(violation.getMessage());
+            }
+            throw new ConstraintViolationException(violationMessages.toString(), violations);
+        }
     }
 
     @Transactional
