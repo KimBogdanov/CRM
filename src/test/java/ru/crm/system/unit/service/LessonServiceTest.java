@@ -23,16 +23,18 @@ import ru.crm.system.mapper.lesson.LessonReadMapper;
 import ru.crm.system.service.LessonService;
 import ru.crm.system.service.LogInfoService;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -98,12 +100,42 @@ public class LessonServiceTest {
     void create_shouldThrowValidationException_whenLessonCreateDtoInvalid() {
         var invalidLessonCreateDto = getInvalidLessonCreateEditDto();
 
-        when(validator.validate(invalidLessonCreateDto)).thenReturn(Set.of());
-
         var actualLessonReadDto = lessonService.create(invalidLessonCreateDto);
 
         assertThat(actualLessonReadDto).isEmpty();
         verifyNoInteractions(publisher, logInfoService);
+    }
+
+    @Test
+    void update_shouldUpdateExistingLesson_whenLessonUpdateIsValid() {
+        var validLessonEditDto = getValidLessonCreateEditDto();
+        var existingLesson = getLesson();
+        var lessonReadDto = getLessonReadDto();
+
+        when(lessonRepository.findById(EXISTING_LESSON_ID)).thenReturn(Optional.of(existingLesson));
+        when(lessonCreateEditMapper.map(validLessonEditDto, existingLesson)).thenReturn(existingLesson);
+        when(lessonRepository.saveAndFlush(existingLesson)).thenReturn(existingLesson);
+        when(lessonReadMapper.map(existingLesson)).thenReturn(lessonReadDto);
+
+        var actualLesson = lessonService.update(EXISTING_LESSON_ID, validLessonEditDto);
+
+        assertThat(actualLesson).isPresent();
+        actualLesson.ifPresent(lesson ->
+                assertAll(() -> {
+                    assertThat(lesson.id()).isEqualTo(EXISTING_LESSON_ID);
+                    assertThat(lesson.subject()).isEqualTo("Вокал");
+                    assertThat(lesson.teacherFullName()).isEqualTo("Наталья Петрова");
+                }));
+        verify(validator).validate(validLessonEditDto);
+    }
+
+    @Test
+    void update_shouldThrowValidationExceptions_whenLessonUpdateIsInvalid() {
+        var invalidLessonEditDto = getInvalidLessonCreateEditDto();
+
+        assertThrows(ConstraintViolationException.class, () -> validator.validate(invalidLessonEditDto));
+
+        verifyNoInteractions(lessonRepository, lessonCreateEditMapper, lessonReadMapper);
     }
 
     private LessonCreateEditDto getValidLessonCreateEditDto() {
