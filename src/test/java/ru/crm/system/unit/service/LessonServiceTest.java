@@ -33,9 +33,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -97,13 +99,27 @@ public class LessonServiceTest {
     }
 
     @Test
-    void create_shouldThrowValidationException_whenLessonCreateDtoInvalid() {
+    void create_shouldReturnEmpty_whenLessonCreateDtoInvalid() {
         var invalidLessonCreateDto = getInvalidLessonCreateEditDto();
 
         var actualLessonReadDto = lessonService.create(invalidLessonCreateDto);
 
         assertThat(actualLessonReadDto).isEmpty();
-        verifyNoInteractions(publisher, logInfoService);
+
+        verify(validator).validate(invalidLessonCreateDto);
+        verifyNoInteractions(lessonRepository, publisher, logInfoService);
+    }
+
+    @Test
+    void create_shouldThrowValidationException_whenLessonCreateDtoInvalid() {
+        var invalidLessonCreateDto = getInvalidLessonCreateEditDto();
+        when(validator.validate(invalidLessonCreateDto)).thenThrow(ConstraintViolationException.class);
+
+        assertThrows(ConstraintViolationException.class, () -> lessonService.create(invalidLessonCreateDto));
+        assertThatThrownBy(() -> lessonService.create(invalidLessonCreateDto)).isInstanceOf(ConstraintViolationException.class);
+
+        verify(validator, times(2)).validate(any());
+        verifyNoInteractions(lessonCreateEditMapper, lessonReadMapper, publisher, logInfoService);
     }
 
     @Test
@@ -126,16 +142,31 @@ public class LessonServiceTest {
                     assertThat(lesson.subject()).isEqualTo("Вокал");
                     assertThat(lesson.teacherFullName()).isEqualTo("Наталья Петрова");
                 }));
+
         verify(validator).validate(validLessonEditDto);
     }
 
     @Test
     void update_shouldThrowValidationExceptions_whenLessonUpdateIsInvalid() {
         var invalidLessonEditDto = getInvalidLessonCreateEditDto();
+        when(validator.validate(invalidLessonEditDto)).thenThrow(ConstraintViolationException.class);
 
-        assertThrows(ConstraintViolationException.class, () -> validator.validate(invalidLessonEditDto));
+        assertThrows(ConstraintViolationException.class, () -> lessonService.update(EXISTING_LESSON_ID, invalidLessonEditDto));
 
+        verify(validator).validate(any());
         verifyNoInteractions(lessonRepository, lessonCreateEditMapper, lessonReadMapper);
+    }
+
+    @Test
+    void update_shouldReturnEmpty_whenLessonUpdateIsInvalid() {
+        var invalidLessonEditDto = getInvalidLessonCreateEditDto();
+        var actualLesson = lessonService.update(EXISTING_LESSON_ID, invalidLessonEditDto);
+
+        assertThat(actualLesson).isEmpty();
+
+        verify(validator).validate(any());
+        verify(lessonRepository).findById(EXISTING_LESSON_ID);
+        verifyNoInteractions(lessonCreateEditMapper, lessonReadMapper);
     }
 
     private LessonCreateEditDto getValidLessonCreateEditDto() {
