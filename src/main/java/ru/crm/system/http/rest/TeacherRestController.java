@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.crm.system.database.entity.Subject;
 import ru.crm.system.dto.teacher.TeacherCreateEditDto;
 import ru.crm.system.dto.teacher.TeacherReadDto;
 import ru.crm.system.exception.NotFoundException;
@@ -43,5 +44,10 @@ public class TeacherRestController {
     @Operation(summary = "Get all teachers from database.")
     public List<TeacherReadDto> findAll() {
         return teacherService.findAll();
+    }
+
+    @GetMapping("/by-subject")
+    public List<TeacherReadDto> findBySubject(Subject subject) {
+        return teacherService.getAllBySubject(subject);
     }
 }
