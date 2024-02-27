@@ -15,6 +15,8 @@ import ru.crm.system.database.entity.enums.Role;
 import ru.crm.system.database.repository.AbonementRepository;
 import ru.crm.system.dto.abonement.AbonementCreatEditDto;
 import ru.crm.system.dto.abonement.AbonementReadDto;
+import ru.crm.system.listener.entity.AccessType;
+import ru.crm.system.listener.entity.EntityEvent;
 import ru.crm.system.mapper.abonement.AbonementCreateEditMapper;
 import ru.crm.system.mapper.abonement.AbonementReadMapper;
 import ru.crm.system.service.AbonementService;
@@ -27,6 +29,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,6 +87,21 @@ public class AbonementServiceTest {
         var actualAbonementReadDto = abonementService.create(validAbonementCreateDto, EXISTING_ADMIN_ID, EXISTING_ORDER_ID);
 
         assertThat(actualAbonementReadDto).isEqualTo(expectedAbonementReadDto);
+    }
+
+    @Test
+    void create_shouldCrateLogInfoAndPublishIt_whenAbonementSavedInDb() {
+        var validAbonementCreateDto = getAbonementCreateDto();
+        var abonement = getAbonement();
+        var expectedAbonementReadDto = getAbonementReadDto();
+        when(abonementCreateEditMapper.map(validAbonementCreateDto)).thenReturn(abonement);
+        when(abonementRepository.save(abonement)).thenReturn(abonement);
+        when(abonementReadMapper.map(abonement)).thenReturn(expectedAbonementReadDto);
+
+        abonementService.create(validAbonementCreateDto, EXISTING_ADMIN_ID, EXISTING_ORDER_ID);
+
+        verify(logInfoService).createAbonementLogInfo(validAbonementCreateDto, EXISTING_ADMIN_ID, EXISTING_ORDER_ID);
+        verify(publisher).publishEvent(new EntityEvent<>(abonement, AccessType.CREATE, any()));
     }
 
     private Abonement getAbonement() {

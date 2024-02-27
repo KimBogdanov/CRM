@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.crm.system.database.entity.enums.AbonementStatus;
 import ru.crm.system.database.entity.enums.AbonementType;
+import ru.crm.system.database.repository.LogInfoRepository;
 import ru.crm.system.dto.abonement.AbonementCreatEditDto;
 import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.AbonementService;
@@ -24,6 +25,7 @@ public class AbonementServiceIT extends IntegrationTestBase {
     private static final Integer EXISTING_ORDER_ID = 1;
 
     private final AbonementService abonementService;
+    private final LogInfoRepository logInfoRepository;
 
     @Test
     void findById_shouldFindAbonementById_ifAbonementExists() {
@@ -54,6 +56,25 @@ public class AbonementServiceIT extends IntegrationTestBase {
             assertThat(actualAbonementReadDto.type()).isEqualTo(validAbonementCreateDto.type().name());
             assertThat(actualAbonementReadDto.begin()).isEqualTo(validAbonementCreateDto.begin());
             assertThat(actualAbonementReadDto.expire()).isEqualTo(validAbonementCreateDto.expire());
+        });
+    }
+
+    @Test
+    void create_shouldCrateLogInfoAndPublishIt_whenAbonementSavedInDb() {
+        var validAbonementCreateDto = getAbonementCreateDto();
+
+        var logInfosBeforeSaveAbonement = logInfoRepository.findAll();
+        assertThat(logInfosBeforeSaveAbonement.size()).isEqualTo(0);
+
+        abonementService.create(validAbonementCreateDto, EXISTING_ADMIN_ID, EXISTING_ORDER_ID);
+        var logInfosAfterSaveAbonement = logInfoRepository.findAll();
+        assertThat(logInfosAfterSaveAbonement.size()).isEqualTo(1);
+
+        var logInfo = logInfosAfterSaveAbonement.get(0);
+        assertAll(() -> {
+            assertThat(logInfo.getAdmin().getUserInfo().getFirstName()).isEqualTo("Андрей");
+            assertThat(logInfo.getOrder().getId()).isEqualTo(EXISTING_ORDER_ID);
+            assertThat(logInfo.getDescription()).isEqualTo("Продан абонемент на сумму 6500 руб. студенту с id " + EXISTING_STUDENT_ID);
         });
     }
 
