@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import ru.crm.system.database.entity.Lesson;
-import ru.crm.system.database.entity.Student;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.repository.AbonementRepository;
 import ru.crm.system.database.repository.LessonRepository;
@@ -33,6 +32,7 @@ public class LessonService {
     private final LessonReadMapper lessonReadMapper;
     private final ApplicationEventPublisher publisher;
     private final AbonementRepository abonementRepository;
+    private final AbonementService abonementService;
     private final LogInfoService logInfoService;
     private final SalaryService salaryService;
     private final CommentService commentService;
@@ -120,50 +120,14 @@ public class LessonService {
      * - Records are made in the log_info table about the operations performed;
      */
     private void jobInCaseLessonFinishedSuccessfully(Lesson lesson) {
-        writeOffMoneyFromStudentBalance(lesson);
-        subtractOneLessonFromAbonement(lesson);
+        abonementService.writeOffMoneyFromStudentBalance(lesson);
+        abonementService.subtractOneLessonFromAbonement(lesson);
         salaryService.addMoneyIntoTeacherAccount(lesson);
         var studentLogInfo = logInfoService.createLogInfoWhenWriteOffFromStudentBalance(lesson);
         var teacherLogInfo = logInfoService.createLogInfoWhenTeacherGetsPayment(lesson);
         publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, studentLogInfo));
         publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, teacherLogInfo));
         abonementRepository.flush();
-    }
-
-    private void writeOffMoneyFromStudentBalance(Lesson lesson) {
-        var lessonStudents = lesson.getStudents().stream().toList();
-        for (Student student : lessonStudents) {
-            var studentBalance = student.getAbonement().getBalance();
-            if (studentBalance.doubleValue() > 0) {
-                var lessonCost = lesson.getCost();
-                var balanceAfterLesson = studentBalance.subtract(lessonCost);
-                if (balanceAfterLesson.doubleValue() > 0) {
-                    student.getAbonement().setBalance(studentBalance);
-                } else {
-                    throw new RuntimeException(String.format("У студента %s %s недостаточно денег для оплаты урока.",
-                            student.getUserInfo().getFirstName(),
-                            student.getUserInfo().getLastName()));
-                }
-            } else {
-                throw new RuntimeException(String.format("У студента %s %s недостаточно денег для оплаты урока.",
-                        student.getUserInfo().getFirstName(),
-                        student.getUserInfo().getLastName()));
-            }
-        }
-    }
-
-    private void subtractOneLessonFromAbonement(Lesson lesson) {
-        var lessonStudents = lesson.getStudents().stream().toList();
-        for (Student student : lessonStudents) {
-            var currentNumberOfLessons = student.getAbonement().getNumberOfLessons();
-            if (currentNumberOfLessons > 0) {
-                student.getAbonement().setNumberOfLessons(currentNumberOfLessons - 1);
-            } else {
-                throw new RuntimeException(String.format("У ученика %s %s количество уроков в абонементе = 0",
-                        student.getUserInfo().getFirstName(),
-                        student.getUserInfo().getLastName()));
-            }
-        }
     }
 
     /**

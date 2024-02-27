@@ -5,6 +5,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.crm.system.database.entity.Abonement;
+import ru.crm.system.database.entity.Lesson;
+import ru.crm.system.database.entity.Student;
 import ru.crm.system.database.repository.AbonementRepository;
 import ru.crm.system.dto.abonement.AbonementCreatEditDto;
 import ru.crm.system.dto.abonement.AbonementReadDto;
@@ -68,5 +70,43 @@ public class AbonementService {
         abonement.setBalance(newBalance);
         abonementRepository.flush();
         return newBalance;
+    }
+
+    @Transactional
+    public void writeOffMoneyFromStudentBalance(Lesson lesson) {
+        var lessonStudents = lesson.getStudents().stream().toList();
+        for (Student student : lessonStudents) {
+            var studentBalance = student.getAbonement().getBalance();
+            if (studentBalance.doubleValue() > 0) {
+                var lessonCost = lesson.getCost();
+                var balanceAfterLesson = studentBalance.subtract(lessonCost);
+                if (balanceAfterLesson.doubleValue() > 0) {
+                    student.getAbonement().setBalance(studentBalance);
+                } else {
+                    throw new RuntimeException(String.format("У студента %s %s недостаточно денег для оплаты урока.",
+                            student.getUserInfo().getFirstName(),
+                            student.getUserInfo().getLastName()));
+                }
+            } else {
+                throw new RuntimeException(String.format("У студента %s %s недостаточно денег для оплаты урока.",
+                        student.getUserInfo().getFirstName(),
+                        student.getUserInfo().getLastName()));
+            }
+        }
+    }
+
+    @Transactional
+    public void subtractOneLessonFromAbonement(Lesson lesson) {
+        var lessonStudents = lesson.getStudents().stream().toList();
+        for (Student student : lessonStudents) {
+            var currentNumberOfLessons = student.getAbonement().getNumberOfLessons();
+            if (currentNumberOfLessons > 0) {
+                student.getAbonement().setNumberOfLessons(currentNumberOfLessons - 1);
+            } else {
+                throw new RuntimeException(String.format("У ученика %s %s количество уроков в абонементе = 0",
+                        student.getUserInfo().getFirstName(),
+                        student.getUserInfo().getLastName()));
+            }
+        }
     }
 }
