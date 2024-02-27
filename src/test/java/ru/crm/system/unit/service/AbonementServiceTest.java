@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import ru.crm.system.database.entity.Abonement;
 import ru.crm.system.database.entity.Student;
 import ru.crm.system.database.entity.UserInfo;
@@ -12,9 +13,12 @@ import ru.crm.system.database.entity.enums.AbonementStatus;
 import ru.crm.system.database.entity.enums.AbonementType;
 import ru.crm.system.database.entity.enums.Role;
 import ru.crm.system.database.repository.AbonementRepository;
+import ru.crm.system.dto.abonement.AbonementCreatEditDto;
 import ru.crm.system.dto.abonement.AbonementReadDto;
+import ru.crm.system.mapper.abonement.AbonementCreateEditMapper;
 import ru.crm.system.mapper.abonement.AbonementReadMapper;
 import ru.crm.system.service.AbonementService;
+import ru.crm.system.service.LogInfoService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,11 +34,19 @@ public class AbonementServiceTest {
 
     private static final Integer EXISTING_ABONEMENT_ID = 1;
     private static final Integer EXISTING_STUDENT_ID = 1;
+    private static final Integer EXISTING_ADMIN_ID = 1;
+    private static final Integer EXISTING_ORDER_ID = 1;
 
     @Mock
     private AbonementRepository abonementRepository;
     @Mock
     private AbonementReadMapper abonementReadMapper;
+    @Mock
+    private AbonementCreateEditMapper abonementCreateEditMapper;
+    @Mock
+    private LogInfoService logInfoService;
+    @Mock
+    private ApplicationEventPublisher publisher;
     @InjectMocks
     private AbonementService abonementService;
 
@@ -57,7 +69,20 @@ public class AbonementServiceTest {
                     assertThat(abonement.begin()).isEqualTo(expectedAbonement.getBegin());
                     assertThat(abonement.expire()).isEqualTo(expectedAbonement.getExpire());
                 }));
+    }
 
+    @Test
+    void create_shouldCreateNewAbonement_whenCreateDtoIsValid() {
+        var validAbonementCreateDto = getAbonementCreateDto();
+        var abonement = getAbonement();
+        var expectedAbonementReadDto = getAbonementReadDto();
+        when(abonementCreateEditMapper.map(validAbonementCreateDto)).thenReturn(abonement);
+        when(abonementRepository.save(abonement)).thenReturn(abonement);
+        when(abonementReadMapper.map(abonement)).thenReturn(expectedAbonementReadDto);
+
+        var actualAbonementReadDto = abonementService.create(validAbonementCreateDto, EXISTING_ADMIN_ID, EXISTING_ORDER_ID);
+
+        assertThat(actualAbonementReadDto).isEqualTo(expectedAbonementReadDto);
     }
 
     private Abonement getAbonement() {
@@ -96,6 +121,18 @@ public class AbonementServiceTest {
                 .begin(LocalDate.now())
                 .expire(LocalDate.now().plus(4L, ChronoUnit.MONTHS))
                 .status(AbonementStatus.ACTIVE.name())
+                .build();
+    }
+
+    private AbonementCreatEditDto getAbonementCreateDto() {
+        return AbonementCreatEditDto.builder()
+                .numberOfLessons(5)
+                .balance(BigDecimal.valueOf(6500))
+                .type(AbonementType.INDIVIDUAL)
+                .begin(LocalDate.now())
+                .expire(LocalDate.now().plus(4L, ChronoUnit.MONTHS))
+                .status(AbonementStatus.ACTIVE)
+                .studentId(EXISTING_STUDENT_ID)
                 .build();
     }
 }
