@@ -123,6 +123,16 @@ public class LessonServiceIT extends IntegrationTestBase {
         assertThat(exception.getConstraintViolations()).hasSize(9);
     }
 
+    @Test
+    void changeLessonStatus_shouldChangeLessonStatus_ifLessonExists() {
+        var existingLesson = lessonService.findById(EXISTING_LESSON_ID);
+        existingLesson.ifPresent(lesson -> assertThat(lesson.status()).isEqualTo(LessonStatus.APPOINTED));
+
+        var actualLesson = lessonService.changeLessonStatus(EXISTING_LESSON_ID, LessonStatus.SUCCESSFULLY_FINISHED);
+
+        actualLesson.ifPresent(lesson -> assertThat(lesson.status()).isEqualTo(LessonStatus.SUCCESSFULLY_FINISHED));
+    }
+
     private LessonCreateEditDto getValidLessonCreateEditDto() {
         return LessonCreateEditDto.builder()
                 .studentFullNames(List.of("Андрей Иванов", "Павел Петров"))
