@@ -122,6 +122,8 @@ public class LogInfoService {
                                         lesson.getCost()))
                         .createdAt(now().truncatedTo(SECONDS))
                         .teacherId(lesson.getTeacher().getId())
+                        .studentId(student.getId())
+                        .lessonId(lesson.getId())
                         .build())
                 .toList();
     }
@@ -199,6 +201,7 @@ public class LogInfoService {
                                 lesson.getTeacher().getUserInfo().getLastName(),
                                 salaryService.getPaymentForLesson(lesson)))
                 .createdAt(now().truncatedTo(SECONDS))
+                .lessonId(lesson.getId())
                 .teacherId(lesson.getTeacher().getId())
                 .build();
     }
