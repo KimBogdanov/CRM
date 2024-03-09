@@ -2,12 +2,16 @@ package ru.crm.system.integration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import ru.crm.system.database.entity.Abonement;
+import ru.crm.system.database.entity.Student;
 import ru.crm.system.database.entity.Subject;
 import ru.crm.system.database.entity.enums.LessonPayType;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.entity.enums.LessonType;
 import ru.crm.system.database.repository.LogInfoRepository;
+import ru.crm.system.database.repository.StudentRepository;
 import ru.crm.system.dto.lesson.LessonCreateEditDto;
+import ru.crm.system.dto.lesson.LessonReadDto;
 import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.LessonService;
 
@@ -16,6 +20,7 @@ import javax.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +35,7 @@ public class LessonServiceIT extends IntegrationTestBase {
 
     private final LessonService lessonService;
     private final LogInfoRepository logInfoRepository;
+    private final StudentRepository studentRepository;
 
     @Test
     void create_shouldCreateNewLesson_whenCreateDtoValid() {
@@ -152,6 +158,47 @@ public class LessonServiceIT extends IntegrationTestBase {
             assertThat(logsByTeacherAfterChangeStatus).hasSize(4);
             assertThat(studentLogInfos).hasSize(3);
         });
+    }
+
+    @Test
+    void changeLessonStatus_shouldWriteOffMoneyFromStudentAccounts_whenLessonFinishedSuccessfully() {
+        var existingLesson = lessonService.findById(EXISTING_LESSON_ID);
+        var studentBalances = existingLesson.stream()
+                .map(LessonReadDto::studentFullNames)
+                .map(studentRepository::findAllByFullNames)
+                .flatMap(Collection::stream)
+                .map(Student::getAbonement)
+                .map(Abonement::getBalance)
+                .map(BigDecimal::toString)
+                .toList();
+
+        assertThat(studentBalances).contains("4000.00", "8000.00", "4000.00");
+
+        var existingLessonAfterChangingStatus = lessonService.changeLessonStatus(EXISTING_LESSON_ID, LessonStatus.SUCCESSFULLY_FINISHED);
+
+        var studentBalancesAfterLesson = existingLessonAfterChangingStatus.stream()
+                .map(LessonReadDto::studentFullNames)
+                .map(studentRepository::findAllByFullNames)
+                .flatMap(Collection::stream)
+                .map(Student::getAbonement)
+                .map(Abonement::getBalance)
+                .map(BigDecimal::toString)
+                .toList();
+
+        studentBalancesAfterLesson.forEach(System.out::println);
+
+        assertThat(studentBalancesAfterLesson).contains("3550.00", "7550.00", "3550.00");
+    }
+
+    @Test
+    void check() {
+        var student = studentRepository.findById(1);
+        var balance = student.get().getAbonement().getBalance();
+        System.out.println(balance);
+        student.get().getAbonement().setBalance(BigDecimal.valueOf(100000));
+        studentRepository.findById(1);
+        var balance1 = student.get().getAbonement().getBalance();
+        System.out.println(balance1);
     }
 
     private LessonCreateEditDto getValidLessonCreateEditDto() {
