@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class LessonServiceIT extends IntegrationTestBase {
 
     private static final Integer EXISTING_LESSON_ID = 1;
+    public static final Integer EXISTING_TEACHER_ID = 1;
 
     private final LessonService lessonService;
     private final LogInfoRepository logInfoRepository;
@@ -79,7 +80,7 @@ public class LessonServiceIT extends IntegrationTestBase {
         var createdLesson = lessonService.create(lessonCreateDto);
 
         createdLesson.ifPresent(lesson -> {
-            var logInfosByLesson = logInfoRepository.findByLessonId(lesson.id());
+            var logInfosByLesson = logInfoRepository.findAllByLessonId(lesson.id());
             assertThat(logInfosByLesson).hasSize(1);
             var lessonIdAtLogInfo = logInfosByLesson.stream().map(logInfo -> logInfo.getLesson().getId()).findFirst();
             lessonIdAtLogInfo.ifPresent(id -> assertThat(id).isEqualTo(lesson.id()));
@@ -131,6 +132,26 @@ public class LessonServiceIT extends IntegrationTestBase {
         var actualLesson = lessonService.changeLessonStatus(EXISTING_LESSON_ID, LessonStatus.SUCCESSFULLY_FINISHED);
 
         actualLesson.ifPresent(lesson -> assertThat(lesson.status()).isEqualTo(LessonStatus.SUCCESSFULLY_FINISHED));
+    }
+
+    @Test
+    void changeLessonStatus_shouldCreateLogs_whenLessonFinishedSuccessfully() {
+        var allLogsBeforeChangeLessonStatus = logInfoRepository.findAll();
+        assertThat(allLogsBeforeChangeLessonStatus).hasSize(0);
+
+        lessonService.changeLessonStatus(EXISTING_LESSON_ID, LessonStatus.SUCCESSFULLY_FINISHED);
+
+        var allLogsAfterChangLessonStatus = logInfoRepository.findAll();
+        var logsByLessonAfterChangeStatus = logInfoRepository.findAllByLessonId(EXISTING_LESSON_ID);
+        var logsByTeacherAfterChangeStatus = logInfoRepository.findAllByTeacherId(EXISTING_TEACHER_ID);
+        var studentLogInfos = logInfoRepository.findAllByStudentIds(1, 2, 3);
+
+        assertAll(() -> {
+            assertThat(allLogsAfterChangLessonStatus).hasSize(4);
+            assertThat(logsByLessonAfterChangeStatus).hasSize(4);
+            assertThat(logsByTeacherAfterChangeStatus).hasSize(4);
+            assertThat(studentLogInfos).hasSize(3);
+        });
     }
 
     private LessonCreateEditDto getValidLessonCreateEditDto() {
