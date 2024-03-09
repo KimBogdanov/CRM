@@ -11,6 +11,7 @@ import ru.crm.system.database.repository.AbonementRepository;
 import ru.crm.system.database.repository.LessonRepository;
 import ru.crm.system.dto.lesson.LessonCreateEditDto;
 import ru.crm.system.dto.lesson.LessonReadDto;
+import ru.crm.system.dto.loginfo.LogInfoCreateDto;
 import ru.crm.system.listener.entity.AccessType;
 import ru.crm.system.listener.entity.EntityEvent;
 import ru.crm.system.mapper.lesson.LessonCreateEditMapper;
@@ -19,6 +20,7 @@ import ru.crm.system.mapper.lesson.LessonReadMapper;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -75,8 +77,7 @@ public class LessonService {
     }
 
     @Transactional
-    public Optional<LessonReadDto> changeLessonStatus(Integer lessonId,
-                                                      LessonStatus status) {
+    public Optional<LessonReadDto> changeLessonStatus(Integer lessonId, LessonStatus status) {
         return lessonRepository.findById(lessonId)
                 .map(lesson -> {
                     lesson.setStatus(status);
@@ -93,8 +94,7 @@ public class LessonService {
     }
 
     @Transactional
-    public Optional<LessonReadDto> addComment(Integer lessonId,
-                                              String text) {
+    public Optional<LessonReadDto> addComment(Integer lessonId, String text) {
         return lessonRepository.findById(lessonId)
                 .map(lesson -> {
                     var comment = commentService.createComment(text);
@@ -123,11 +123,17 @@ public class LessonService {
         abonementService.writeOffMoneyFromStudentBalance(lesson);
         abonementService.subtractOneLessonFromAbonement(lesson);
         salaryService.addMoneyIntoTeacherAccount(lesson);
-        var studentLogInfo = logInfoService.createLogInfoWhenWriteOffFromStudentBalance(lesson);
         var teacherLogInfo = logInfoService.createLogInfoWhenTeacherGetsPayment(lesson);
-        publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, studentLogInfo));
         publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, teacherLogInfo));
+        var studentLogInfos = logInfoService.createLogInfosWhenWriteOffFromStudentsBalance(lesson);
+        publishStudentEvent(lesson, studentLogInfos);
         abonementRepository.flush();
+    }
+
+    private void publishStudentEvent(Lesson lesson, List<LogInfoCreateDto> logInfos) {
+        for (LogInfoCreateDto logInfo : logInfos) {
+            publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, logInfo));
+        }
     }
 
     /**
@@ -140,9 +146,9 @@ public class LessonService {
     private void jobInCaseLessonCanceledForGoodReason(Lesson lesson) {
         salaryService.addMoneyIntoTeacherAccount(lesson);
         var teacherLogInfo = logInfoService.createLogInfoWhenTeacherGetsPayment(lesson);
-        var godReasonLogInfo = logInfoService.createLogInfoWhenLessonCanceledByGoodReason(lesson);
         publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, teacherLogInfo));
-        publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, godReasonLogInfo));
+        var goodReasonLogInfos = logInfoService.createLogInfoWhenLessonCanceledByGoodReason(lesson);
+        goodReasonLogInfos.forEach(logInfo -> publisher.publishEvent(new EntityEvent<>(lesson, AccessType.UPDATE, logInfo)));
     }
 
     /**
