@@ -81,7 +81,7 @@ public class AbonementService {
                 var lessonCost = lesson.getCost();
                 var balanceAfterLesson = studentBalance.subtract(lessonCost);
                 if (balanceAfterLesson.doubleValue() > 0) {
-                    student.getAbonement().setBalance(studentBalance);
+                    student.getAbonement().setBalance(balanceAfterLesson);
                 } else {
                     throw new RuntimeException(String.format("У студента %s %s недостаточно денег для оплаты урока.",
                             student.getUserInfo().getFirstName(),
