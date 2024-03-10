@@ -252,6 +252,22 @@ public class LessonServiceIT extends IntegrationTestBase {
         });
     }
 
+    @Test
+    void changeLessonStatus_shouldCreateLogs_whenLessonWasCancelled() {
+        var logsBeforeLessonCancelled = logInfoRepository.findAll();
+        assertThat(logsBeforeLessonCancelled).hasSize(0);
+
+        lessonService.changeLessonStatus(EXISTING_LESSON_ID, LessonStatus.CANCELED);
+
+        var logsAfterLessonWasCancelled = logInfoRepository.findAll();
+        var logsByTeacherAfterLessonWasCancelled = logInfoRepository.findAllByTeacherId(EXISTING_TEACHER_ID);
+
+        assertAll(() -> {
+            assertThat(logsAfterLessonWasCancelled).hasSize(1);
+            assertThat(logsByTeacherAfterLessonWasCancelled).hasSize(1);
+        });
+    }
+
     private LessonCreateEditDto getValidLessonCreateEditDto() {
         return LessonCreateEditDto.builder()
                 .studentFullNames(List.of("Андрей Иванов", "Павел Петров"))
