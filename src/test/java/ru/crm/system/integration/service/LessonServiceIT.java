@@ -233,6 +233,25 @@ public class LessonServiceIT extends IntegrationTestBase {
         });
     }
 
+    @Test
+    void changeLessonStatus_shouldCreateLogs_whenLessonCanceledByTeacherFault() {
+        var allLogsBeforeChangingStatus = logInfoRepository.findAll();
+
+        assertThat(allLogsBeforeChangingStatus).hasSize(0);
+
+        lessonService.changeLessonStatus(EXISTING_LESSON_ID, LessonStatus.CANCELED_BY_TEACHER_FAULT);
+
+        var allLogsAfterChangingStatus = logInfoRepository.findAll();
+        var teacherLogsAfterChangingStatus = logInfoRepository.findAllByTeacherId(EXISTING_TEACHER_ID);
+        var studentLogsAfterChangingStatus = logInfoRepository.findAllByStudentIds(1, 2, 3);
+
+        assertAll(() -> {
+            assertThat(allLogsAfterChangingStatus).hasSize(1);
+            assertThat(teacherLogsAfterChangingStatus).hasSize(1);
+            assertThat(studentLogsAfterChangingStatus).hasSize(0);
+        });
+    }
+
     private LessonCreateEditDto getValidLessonCreateEditDto() {
         return LessonCreateEditDto.builder()
                 .studentFullNames(List.of("Андрей Иванов", "Павел Петров"))
