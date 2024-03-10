@@ -185,20 +185,31 @@ public class LessonServiceIT extends IntegrationTestBase {
                 .map(BigDecimal::toString)
                 .toList();
 
-        studentBalancesAfterLesson.forEach(System.out::println);
-
         assertThat(studentBalancesAfterLesson).contains("3550.00", "7550.00", "3550.00");
     }
 
     @Test
-    void check() {
-        var student = studentRepository.findById(1);
-        var balance = student.get().getAbonement().getBalance();
-        System.out.println(balance);
-        student.get().getAbonement().setBalance(BigDecimal.valueOf(100000));
-        studentRepository.findById(1);
-        var balance1 = student.get().getAbonement().getBalance();
-        System.out.println(balance1);
+    void changeLessonStatus_shouldSubtractOneLessonFromStudentsAccount_whenLessonFinishedSuccessfully() {
+        var numberOfLessonsOnAbonementByStudentBeforeLesosn = lessonService.findById(EXISTING_LESSON_ID).stream()
+                .map(LessonReadDto::studentFullNames)
+                .map(studentRepository::findAllByFullNames)
+                .flatMap(Collection::stream)
+                .map(Student::getAbonement)
+                .map(Abonement::getNumberOfLessons)
+                .toList();
+
+        assertThat(numberOfLessonsOnAbonementByStudentBeforeLesosn).containsExactly(4, 8, 4);
+
+        var numberOfLessonsAfterSuccessfulLesson = lessonService.changeLessonStatus(EXISTING_LESSON_ID,
+                        LessonStatus.SUCCESSFULLY_FINISHED).stream()
+                .map(LessonReadDto::studentFullNames)
+                .map(studentRepository::findAllByFullNames)
+                .flatMap(Collection::stream)
+                .map(Student::getAbonement)
+                .map(Abonement::getNumberOfLessons)
+                .toList();
+
+        assertThat(numberOfLessonsAfterSuccessfulLesson).containsExactly(3, 7, 3);
     }
 
     private LessonCreateEditDto getValidLessonCreateEditDto() {
