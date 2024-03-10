@@ -171,6 +171,7 @@ public class LogInfoService {
                 .description("Занятие было отменено.")
                 .createdAt(now().truncatedTo(SECONDS))
                 .teacherId(lesson.getTeacher().getId())
+                .lessonId(lesson.getId())
                 .build();
     }
 
