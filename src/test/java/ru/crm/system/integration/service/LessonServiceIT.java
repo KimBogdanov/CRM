@@ -10,6 +10,7 @@ import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.entity.enums.LessonType;
 import ru.crm.system.database.repository.LogInfoRepository;
 import ru.crm.system.database.repository.StudentRepository;
+import ru.crm.system.database.repository.TeacherRepository;
 import ru.crm.system.dto.lesson.LessonCreateEditDto;
 import ru.crm.system.dto.lesson.LessonReadDto;
 import ru.crm.system.integration.IntegrationTestBase;
@@ -36,6 +37,7 @@ public class LessonServiceIT extends IntegrationTestBase {
     private final LessonService lessonService;
     private final LogInfoRepository logInfoRepository;
     private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
 
     @Test
     void create_shouldCreateNewLesson_whenCreateDtoValid() {
@@ -210,6 +212,25 @@ public class LessonServiceIT extends IntegrationTestBase {
                 .toList();
 
         assertThat(numberOfLessonsAfterSuccessfulLesson).containsExactly(3, 7, 3);
+    }
+
+    @Test
+    void changeLessonStatus_shouldCreateTeachersAndStudentLogs_whenLessonCanceledForGoodReason() {
+        var allLogsBeforeChangingStatus = logInfoRepository.findAll();
+
+        assertThat(allLogsBeforeChangingStatus).hasSize(0);
+
+        lessonService.changeLessonStatus(EXISTING_LESSON_ID, LessonStatus.CANCELED_FOR_GOOD_REASON);
+
+        var allLogsAfterChangingStatus = logInfoRepository.findAll();
+        var teacherLogsAfterChangingStatus = logInfoRepository.findAllByTeacherId(EXISTING_TEACHER_ID);
+        var studentLogsAfterChangingStatus = logInfoRepository.findAllByStudentIds(1, 2, 3);
+
+        assertAll(() -> {
+            assertThat(allLogsAfterChangingStatus).hasSize(4);
+            assertThat(teacherLogsAfterChangingStatus).hasSize(4);
+            assertThat(studentLogsAfterChangingStatus).hasSize(3);
+        });
     }
 
     private LessonCreateEditDto getValidLessonCreateEditDto() {
