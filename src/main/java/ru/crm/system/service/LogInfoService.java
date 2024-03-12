@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.crm.system.database.entity.Abonement;
+import ru.crm.system.database.entity.Admin;
 import ru.crm.system.database.entity.Lesson;
 import ru.crm.system.database.entity.LogInfo;
 import ru.crm.system.database.entity.Student;
@@ -222,6 +223,45 @@ public class LogInfoService {
                 .orderId(oderId)
                 .adminId(adminId)
                 .studentId(student.getId())
+                .build();
+    }
+
+    /**
+     * Method to create LogInfo when order was created.
+     */
+    public LogInfoCreateDto creatLogInfoWhenNewOrderWasCreated(Integer orderId) {
+        return LogInfoCreateDto.builder()
+                .action(ActionType.CREATED)
+                .description("Создана новая заявка № " + orderId)
+                .createdAt(now().truncatedTo(SECONDS))
+                .build();
+    }
+
+    /**
+     * Method to create LogInfo when changing order status.
+     */
+    public LogInfoCreateDto createLogInfoWhenChangingOrderStatus(Integer adminId, Integer orderId) {
+        return LogInfoCreateDto.builder()
+                .adminId(adminId)
+                .orderId(orderId)
+                .createdAt(now().truncatedTo(SECONDS))
+                .build();
+    }
+
+    /**
+     * Method to create LogInfo when adding a comment to order.
+     */
+    public LogInfoCreateDto createLogInfoWhenAddingCommentToOrder(Integer orderId, String text, Admin admin) {
+        return LogInfoCreateDto.builder()
+                .action(ActionType.COMMENT)
+                .adminId(admin.getId())
+                .createdAt(now().truncatedTo(SECONDS))
+                .description(String.format("Админ %s %s добавил комментарий к заявке №%d: %s",
+                        admin.getUserInfo().getFirstName(),
+                        admin.getUserInfo().getLastName(),
+                        orderId,
+                        text))
+                .orderId(orderId)
                 .build();
     }
 }
