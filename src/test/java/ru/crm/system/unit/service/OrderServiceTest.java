@@ -11,10 +11,12 @@ import ru.crm.system.database.entity.Order;
 import ru.crm.system.database.entity.enums.OrderStatus;
 import ru.crm.system.database.repository.AdminRepository;
 import ru.crm.system.database.repository.OrderRepository;
+import ru.crm.system.dto.loginfo.LogInfoCreateDto;
 import ru.crm.system.dto.order.OrderCreateEditDto;
 import ru.crm.system.dto.order.OrderReadDto;
 import ru.crm.system.mapper.OrderCreateEditMapper;
 import ru.crm.system.mapper.OrderReadMapper;
+import ru.crm.system.service.LogInfoService;
 import ru.crm.system.service.OrderService;
 import ru.crm.system.util.DateTimeUtil;
 
@@ -47,6 +49,8 @@ class OrderServiceTest {
     private ApplicationEventPublisher publisher;
     @Mock
     private AdminRepository adminRepository;
+    @Mock
+    private LogInfoService logInfoService;
     @InjectMocks
     private OrderService orderService;
 
@@ -150,6 +154,7 @@ class OrderServiceTest {
         existingOrder.setStatus(OrderStatus.APPOINTMENT_COMPLETED);
         when(orderRepository.findById(EXISTING_ORDER_ID)).thenReturn(Optional.of(existingOrder));
         when(orderReadMapper.map(existingOrder)).thenCallRealMethod();
+        when(logInfoService.createLogInfoWhenChangingOrderStatus(EXISING_ADMIN_ID, EXISTING_ORDER_ID)).thenReturn(LogInfoCreateDto.builder().build());
 
         var actualOrder = orderService.changeStatus(EXISTING_ORDER_ID, EXISING_ADMIN_ID, OrderStatus.APPOINTMENT_COMPLETED);
 
