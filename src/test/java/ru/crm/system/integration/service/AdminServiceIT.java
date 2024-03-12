@@ -10,11 +10,14 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RequiredArgsConstructor
 public class AdminServiceIT extends IntegrationTestBase {
 
     private static final Integer EXISTING_ADMIN_ID = 1;
+    private static final Integer NOT_EXISTING_ADMIN_ID = 999;
 
     private final AdminService adminService;
 
@@ -40,6 +43,26 @@ public class AdminServiceIT extends IntegrationTestBase {
                     assertThat(admin.phone()).isEqualTo("8-925-999-99-99");
                     assertThat(admin.email()).isEqualTo("adminFirst@gmail.com");
                 }));
+    }
+
+    @Test
+    void delete_shouldDeleteAdmin_ifAdminExists() {
+        var existingAdmin = adminService.findById(EXISTING_ADMIN_ID);
+        assertThat(existingAdmin).isPresent();
+
+        var isAdminDeleted = adminService.delete(EXISTING_ADMIN_ID);
+        var adminAfterDeleting = adminService.findById(EXISTING_ADMIN_ID);
+
+        assertAll(() -> {
+            assertTrue(isAdminDeleted);
+            assertThat(adminAfterDeleting).isEmpty();
+        });
+    }
+
+    @Test
+    void delete_shouldReturnFalse_ifAdminNotExist() {
+        var isAdminDeleted = adminService.delete(NOT_EXISTING_ADMIN_ID);
+        assertFalse(isAdminDeleted);
     }
 
     private AdminCreateEditDto getAdminCreateDto() {
