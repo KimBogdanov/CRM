@@ -37,7 +37,7 @@ public class StudentRestController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Method to create teacher.")
+    @Operation(summary = "Method to create a new student.")
     public StudentReadDto create(Integer orderId,
                                  Integer adminId,
                                  @Validated @RequestBody StudentCreateEditDto createDto) {
