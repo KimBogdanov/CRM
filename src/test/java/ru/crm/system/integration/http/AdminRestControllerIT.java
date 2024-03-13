@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.crm.system.dto.admin.AdminCreateEditDto;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 
 import static org.hamcrest.core.Is.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -70,6 +72,18 @@ public class AdminRestControllerIT extends IntegrationTestBase {
     @Test
     void findById_shouldReturn404_whenAdminNotExists() throws Exception {
         mockMvc.perform(get(BASE_ADMIN_URL + NOT_EXISTING_ADMIN_ID))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void delete_shouldReturn204_whenAdminExists() throws Exception {
+        mockMvc.perform(delete(BASE_ADMIN_URL + EXISTING_ADMIN_ID + "/delete"))
+                .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+    }
+
+    @Test
+    void delete_shouldReturn404_whenAdminNotExist() throws Exception {
+        mockMvc.perform(delete(BASE_ADMIN_URL + NOT_EXISTING_ADMIN_ID + "/delete"))
                 .andExpect(status().isNotFound());
     }
 
