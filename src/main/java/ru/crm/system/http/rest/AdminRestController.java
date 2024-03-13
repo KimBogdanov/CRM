@@ -3,6 +3,7 @@ package ru.crm.system.http.rest;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,5 +36,15 @@ public class AdminRestController {
     public AdminReadDto findById(@PathVariable("id") Integer id) {
         return adminService.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Администратор с номером %d не найден.", id)));
+    }
+
+    @DeleteMapping("/{id}/delete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Method to delete admin by id.")
+    public boolean delete(@PathVariable("id") Integer id) {
+        if (!adminService.delete(id)) {
+            throw new NotFoundException("Админ с id " + id + " не найден в базе.");
+        }
+        return true;
     }
 }
