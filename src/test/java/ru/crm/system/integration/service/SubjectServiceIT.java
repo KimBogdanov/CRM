@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.SubjectService;
 
@@ -76,6 +77,20 @@ class SubjectServiceIT extends IntegrationTestBase {
 
         assertThat(isSubjectDeleted).isTrue();
         assertThat(existingSubjectAfterDeleting).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Вокал", "Гитара", "Скрипка", "Ударные", "Фортепиано"})
+    void findByName_shouldReturnSubject_ifSubjectExists(String name) {
+        var existingSubject = subjectService.findByName(name);
+        assertThat(existingSubject).isPresent();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Барабан", "Флейта", "Балалайка", "Трамбон"})
+    void findByName_shouldReturnEmpty_whenSubjectNotExist(String name) {
+        var existingSubject = subjectService.findByName(name);
+        assertThat(existingSubject).isEmpty();
     }
 
     @Test
