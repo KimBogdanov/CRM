@@ -2,6 +2,7 @@ package ru.crm.system.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.crm.system.database.entity.Subject;
 import ru.crm.system.database.repository.SubjectRepository;
 import ru.crm.system.dto.subject.SubjectCreateEditDto;
@@ -39,6 +40,7 @@ public class SubjectService {
                 .map(subjectReadMapper::map);
     }
 
+    @Transactional
     public SubjectReadDto save(SubjectCreateEditDto createDto) {
         if (subjectRepository.existsByNameLikeIgnoreCase(createDto.name())) {
             throw new EntityExistsException("Предмет " + createDto.name() + " уже есть в базе данных");
