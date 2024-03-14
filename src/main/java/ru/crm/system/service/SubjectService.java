@@ -52,6 +52,12 @@ public class SubjectService {
                 .orElseThrow(() -> new CreateEntityException("Невозможно создать предмет с указанными параметрами"));
     }
 
+    public Optional<SubjectReadDto> findByName(String name) {
+        return subjectRepository.getSubjectByName(name)
+                .map(subjectReadMapper::map);
+    }
+
+    @Transactional
     public boolean delete(Integer id) {
         return subjectRepository.findById(id)
                 .map(subject -> {
