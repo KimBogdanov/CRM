@@ -44,7 +44,7 @@ public class TeacherCreateEditMapper implements Mapper<TeacherCreateEditDto, Tea
 
     private List<Subject> getSubjects(List<String> subjectNames) {
         return subjectNames.stream()
-                .map(subjectRepository::findSubjectByName)
+                .map(subjectRepository::getSubjectByName)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
