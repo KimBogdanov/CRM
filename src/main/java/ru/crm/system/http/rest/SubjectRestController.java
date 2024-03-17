@@ -37,4 +37,11 @@ public class SubjectRestController {
                         .body(subject)
                 ).orElseThrow(() -> new NotFoundException("Предмет с названием " + name + " не найден в базе данных."));
     }
+
+    @GetMapping("/by-part-of-name")
+    public ResponseEntity<List<String>> findAllByPartOfName(@RequestParam String partOfName) {
+        var subjectsByPartOfName = subjectService.findAllByNameContaining(partOfName);
+
+        return ok().body(subjectsByPartOfName);
+    }
 }
