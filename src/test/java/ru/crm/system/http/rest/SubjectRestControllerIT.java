@@ -50,4 +50,12 @@ class SubjectRestControllerIT extends IntegrationTestBase {
         mockMvc.perform(get(SUBJECT_BASE_URL + "/by-name").queryParam("name", name))
                 .andExpect(status().isNotFound());
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"O", "a", "к", "гит" ,"предмет"})
+    void findAllByPartOfName_shouldReturnSubjectListByPartOfName(String partOfName) throws Exception {
+        mockMvc.perform(get(SUBJECT_BASE_URL + "/by-part-of-name").param("partOfName", partOfName))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON));
+    }
 }
