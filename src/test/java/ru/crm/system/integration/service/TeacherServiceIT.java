@@ -2,8 +2,13 @@ package ru.crm.system.integration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import ru.crm.system.database.entity.enums.TeacherStatus;
+import ru.crm.system.dto.teacher.TeacherCreateEditDto;
 import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.TeacherService;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -35,5 +40,34 @@ public class TeacherServiceIT extends IntegrationTestBase {
         var existingTeacher = teacherService.findById(NOT_EXISTING_TEACHER_ID);
 
         assertThat(existingTeacher).isEmpty();
+    }
+
+    @Test
+    void create_shouldCreateTeacherAndSaveItIntoDb_whenCreateDtoValid() {
+        var teacherCreateDto = getTeacherCreateDto();
+        var createdTeacher = teacherService.create(teacherCreateDto);
+
+        assertAll(() -> {
+            assertThat(createdTeacher.id()).isPositive();
+            assertThat(createdTeacher.firstName()).isEqualTo("TestFirstName");
+            assertThat(createdTeacher.lastName()).isEqualTo("TestLastName");
+            assertThat(createdTeacher.phone()).isEqualTo("8-9-778-89-65");
+            assertThat(createdTeacher.email()).isEqualTo("check@gmail.com");
+            assertThat(createdTeacher.status().name()).isEqualTo(TeacherStatus.ACTIVE.name());
+            assertThat(createdTeacher.subjects().size()).isEqualTo(2);
+        });
+    }
+
+    private TeacherCreateEditDto getTeacherCreateDto() {
+        return TeacherCreateEditDto.builder()
+                .firstName("TestFirstName")
+                .lastName("TestLastName")
+                .phone("8-9-778-89-65")
+                .email("check@gmail.com")
+                .rawPassword("123")
+                .status(TeacherStatus.ACTIVE)
+                .subjects(List.of("Вокал", "Гитара"))
+                .salaryPerHour(BigDecimal.valueOf(1200))
+                .build();
     }
 }
