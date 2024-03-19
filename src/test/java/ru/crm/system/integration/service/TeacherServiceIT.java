@@ -58,6 +58,18 @@ public class TeacherServiceIT extends IntegrationTestBase {
         });
     }
 
+    @Test
+    void delete_shouldDeleteTeacher_ifTeacherExists() {
+        var existingTeacher = teacherService.findById(EXISTING_TEACHER_ID);
+        assertThat(existingTeacher).isPresent();
+
+        var isTeacherDeleted = teacherService.delete(EXISTING_TEACHER_ID);
+        var teacherAfterDeleting = teacherService.findById(EXISTING_TEACHER_ID);
+
+        assertThat(isTeacherDeleted).isTrue();
+        assertThat(teacherAfterDeleting).isEmpty();
+    }
+
     private TeacherCreateEditDto getTeacherCreateDto() {
         return TeacherCreateEditDto.builder()
                 .firstName("TestFirstName")
