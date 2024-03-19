@@ -47,4 +47,15 @@ public class TeacherService {
                 .map(teacherReadMapper::map)
                 .toList();
     }
+
+    @Transactional
+    public boolean delete(Integer id) {
+        return teacherRepository.findById(id)
+                .map(teacher -> {
+                    teacherRepository.deleteById(id);
+                    teacherRepository.flush();
+                    return true;
+                })
+                .orElse(false);
+    }
 }
