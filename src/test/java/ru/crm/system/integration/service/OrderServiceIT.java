@@ -8,7 +8,7 @@ import ru.crm.system.database.entity.enums.OrderStatus;
 import ru.crm.system.database.repository.OrderRepository;
 import ru.crm.system.dto.order.OrderCreateEditDto;
 import ru.crm.system.dto.order.OrderReadDto;
-import ru.crm.system.integration.IT;
+import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.OrderService;
 
 import java.time.LocalDateTime;
@@ -17,9 +17,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@IT
 @RequiredArgsConstructor
-public class OrderServiceIT {
+public class OrderServiceIT extends IntegrationTestBase {
 
     private static final Integer EXISTING_ORDER_ID = 1;
     private static final Integer NOT_EXISTING_ORDER_ID = 999;
@@ -77,12 +76,13 @@ public class OrderServiceIT {
         var existingOrder = orderService.findById(EXISTING_ORDER_ID);
         var updateDto = getOrderCreateEditDto();
 
-        var actualOrder = orderService.update(EXISTING_ORDER_ID, EXISING_ADMIN_ID, updateDto);
-
         existingOrder.ifPresent(order -> {
             assertThat(order.adminId()).isNull();
             assertThat(order.status()).isEqualTo(OrderStatus.UNPROCESSED);
         });
+
+        var actualOrder = orderService.update(EXISTING_ORDER_ID, EXISING_ADMIN_ID, updateDto);
+
         assertThat(actualOrder).isPresent();
         actualOrder.ifPresent(order ->
                 assertAll(() -> {
@@ -97,19 +97,15 @@ public class OrderServiceIT {
     }
 
     @Test
-    void changeStatus_shouldChangeStatusAndSetAdmin_ifOrderExistsAndHaveNoAdmin() {
+    void changeStatus_shouldChangeStatus_ifOrderExists() {
         var existingOrder = orderService.findById(EXISTING_ORDER_ID);
         var actualOrder = orderService.changeStatus(EXISTING_ORDER_ID, EXISING_ADMIN_ID, OrderStatus.APPOINTMENT_COMPLETED);
 
         existingOrder.ifPresent(order ->
-                assertAll(() -> {
-                    assertThat(order.adminId()).isNull();
-                    assertThat(order.status()).isEqualTo(OrderStatus.UNPROCESSED);
-                }));
-        actualOrder.ifPresent(order -> assertAll(() -> {
-            assertThat(order.adminId()).isEqualTo(EXISING_ADMIN_ID);
-            assertThat(order.status()).isEqualTo(OrderStatus.APPOINTMENT_COMPLETED);
-        }));
+                assertAll(() -> assertThat(order.status()).isEqualTo(OrderStatus.UNPROCESSED)
+                ));
+        actualOrder.ifPresent(order -> assertAll(() ->
+                assertThat(order.status()).isEqualTo(OrderStatus.APPOINTMENT_COMPLETED)));
     }
 
     @Test
@@ -135,7 +131,6 @@ public class OrderServiceIT {
 
     private OrderCreateEditDto getOrderCreateEditDto() {
         return OrderCreateEditDto.builder()
-                .adminId(EXISING_ADMIN_ID)
                 .status(OrderStatus.UNPROCESSED)
                 .orderName("Глинка/Вокал")
                 .clientName("Андрей")

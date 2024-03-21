@@ -22,13 +22,7 @@ public class OrderReadMapper implements Mapper<Order, OrderReadDto> {
                 .phone(entity.getPhone())
                 .requestSource(entity.getRequestSource())
                 .createdAt(dateTime)
-                .adminId(getAdminId(entity))
+                .adminId(entity.getAdmin() == null ? null : entity.getAdmin().getId())
                 .build();
-    }
-
-    private Integer getAdminId(Order order) {
-        return order.getAdmin() == null
-                ? null
-                : order.getAdmin().getId();
     }
 }

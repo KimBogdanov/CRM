@@ -6,14 +6,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.crm.system.database.entity.enums.TeacherStatus;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -25,22 +23,18 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(of = "userInfo")
-@ToString(exclude = {"lessons", "subjects", "logInfos", "salaryLogs"})
+@SuperBuilder
+@EqualsAndHashCode(of = "userInfo", callSuper = true)
+@ToString(exclude = {"lessons", "subjects", "logInfos", "salaryLogs"}, callSuper = true)
 @Entity
-public class Teacher implements BaseEntity<Integer> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Teacher extends AbstractEntity {
 
     private UserInfo userInfo;
 
     @Builder.Default
     @ManyToMany
     @JoinTable(
-            name = "teachers_subject",
+            name = "teacher_subject",
             joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private List<Subject> subjects = new ArrayList<>();

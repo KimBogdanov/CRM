@@ -25,19 +25,18 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
                 .phone(createDto.getPhone())
                 .createdAt(LocalDateTime.now())
                 .requestSource(createDto.getRequestSource())
-                .admin(getAdmin(createDto.getAdminId()))
                 .build();
     }
 
     @Override
     public Order map(OrderCreateEditDto editDto, Order entity) {
+        entity.setAdmin(getAdmin(editDto.getAdminId()));
         entity.setStatus(editDto.getStatus());
         entity.setOrderName(editDto.getOrderName());
         entity.setClientName(editDto.getClientName());
         entity.setPhone(editDto.getPhone());
         entity.setCreatedAt(editDto.getCreatedAt());
         entity.setRequestSource(editDto.getRequestSource());
-        entity.setAdmin(getAdmin(editDto.getAdminId()));
         return entity;
     }
 

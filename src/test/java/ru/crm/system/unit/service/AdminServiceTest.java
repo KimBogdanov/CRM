@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
 public class AdminServiceTest {
 
     private static final Integer EXISTING_ADMIN_ID = 1;
+    private static final Integer NOT_EXISTING_ADMIN_ID = 999;
 
     @Mock
     private AdminRepository adminRepository;
@@ -70,6 +72,16 @@ public class AdminServiceTest {
 
         assertThat(actualAdmin).isPresent();
         actualAdmin.ifPresent(admin -> assertThat(admin).isEqualTo(adminReadDto));
+    }
+
+    @Test
+    void findById_shouldReturnEmpty_ifAdminNotExist() {
+        when(adminRepository.findById(NOT_EXISTING_ADMIN_ID)).thenReturn(Optional.empty());
+
+        var actualAdmin = adminService.findById(NOT_EXISTING_ADMIN_ID);
+
+        assertThat(actualAdmin).isEmpty();
+        verifyNoInteractions(adminReadMapper);
     }
 
     private AdminCreateEditDto getAdminCreateDto() {

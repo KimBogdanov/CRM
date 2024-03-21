@@ -3,19 +3,21 @@ package ru.crm.system.integration.service;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.crm.system.dto.admin.AdminCreateEditDto;
-import ru.crm.system.integration.IT;
+import ru.crm.system.integration.IntegrationTestBase;
 import ru.crm.system.service.AdminService;
 
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@IT
 @RequiredArgsConstructor
-public class AdminServiceIT {
+public class AdminServiceIT extends IntegrationTestBase {
 
     private static final Integer EXISTING_ADMIN_ID = 1;
+    private static final Integer NOT_EXISTING_ADMIN_ID = 999;
 
     private final AdminService adminService;
 
@@ -41,6 +43,26 @@ public class AdminServiceIT {
                     assertThat(admin.phone()).isEqualTo("8-925-999-99-99");
                     assertThat(admin.email()).isEqualTo("adminFirst@gmail.com");
                 }));
+    }
+
+    @Test
+    void delete_shouldDeleteAdmin_ifAdminExists() {
+        var existingAdmin = adminService.findById(EXISTING_ADMIN_ID);
+        assertThat(existingAdmin).isPresent();
+
+        var isAdminDeleted = adminService.delete(EXISTING_ADMIN_ID);
+        var adminAfterDeleting = adminService.findById(EXISTING_ADMIN_ID);
+
+        assertAll(() -> {
+            assertTrue(isAdminDeleted);
+            assertThat(adminAfterDeleting).isEmpty();
+        });
+    }
+
+    @Test
+    void delete_shouldReturnFalse_ifAdminNotExist() {
+        var isAdminDeleted = adminService.delete(NOT_EXISTING_ADMIN_ID);
+        assertFalse(isAdminDeleted);
     }
 
     private AdminCreateEditDto getAdminCreateDto() {

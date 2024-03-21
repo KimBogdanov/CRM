@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.dto.lesson.LessonCreateEditDto;
 import ru.crm.system.dto.lesson.LessonReadDto;
+import ru.crm.system.exception.CreateEntityException;
 import ru.crm.system.exception.NotFoundException;
 import ru.crm.system.service.LessonService;
 
@@ -37,10 +38,10 @@ public class LessonRestController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create new lesson and save it database")
-    public LessonReadDto create(@RequestBody LessonCreateEditDto lessonCreateEditDto,
-                                Integer adminId) {
-        return lessonService.create(lessonCreateEditDto, adminId);
+    @Operation(summary = "Create new lesson and save it in database")
+    public LessonReadDto create(@RequestBody LessonCreateEditDto lessonCreateEditDto) {
+        return lessonService.create(lessonCreateEditDto)
+                .orElseThrow(() -> new CreateEntityException("При создании урока произошла ошибка. Проверьте входные данные."));
     }
 
     @PatchMapping("/{id}/update")

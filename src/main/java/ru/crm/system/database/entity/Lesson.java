@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.crm.system.converter.MoneyConverter;
+import ru.crm.system.database.entity.enums.LessonPayType;
 import ru.crm.system.database.entity.enums.LessonStatus;
 import ru.crm.system.database.entity.enums.LessonType;
 
@@ -17,46 +19,55 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode(exclude = {"id", "student", "teacher"})
-@ToString(exclude = {"student", "teacher", "subject", "comments"})
+@SuperBuilder
+@EqualsAndHashCode(exclude = {"students", "teacher"}, callSuper = true)
+@ToString(exclude = {"students", "teacher", "subject", "comments", "logInfos"}, callSuper = true)
 @Entity
-public class Lesson implements BaseEntity<Integer> {
+public class Lesson extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @ManyToMany(cascade = {PERSIST, MERGE})
+    @JoinTable(name = "student_lesson",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id"))
+    private List<Student> students;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Student student;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = PERSIST)
     private Teacher teacher;
 
-    private LocalDateTime dateTime;
+    private LocalDate date;
+
+    private LocalTime time;
 
     private Integer duration;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = PERSIST)
     private Subject subject;
 
     @Enumerated(EnumType.STRING)
     private LessonStatus status;
 
     @Enumerated(EnumType.STRING)
-    private LessonType type;
+    private LessonPayType payType;
+
+    @Enumerated(EnumType.STRING)
+    private LessonType lessonType;
 
     private String description;
 
@@ -67,6 +78,10 @@ public class Lesson implements BaseEntity<Integer> {
     @ElementCollection
     @CollectionTable(name = "comment")
     private List<Comment> comments = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "lesson")
+    private List<LogInfo> logInfos = new ArrayList<>();
 
     public void addComment(Comment comment) {
         comments.add(comment);

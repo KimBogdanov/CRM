@@ -12,22 +12,20 @@
     <groupId>ru.crm</groupId>
     <artifactId>system</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>system</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>17</java.version>
         <springdoc.version>1.6.12</springdoc.version>
-        <h2.version>2.1.214</h2.version>
-        <site-plugin.version>4.0.0-M3</site-plugin.version>
-        <reports-plugin.version>3.4.1</reports-plugin.version>
-        <jacoco.version>0.8.8</jacoco.version>
+        <testcontainers.mysql>1.19.4</testcontainers.mysql>
+        <log4jdbc.version>2.0.0</log4jdbc.version>
+        <querydsl.version>5.1.0</querydsl.version>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -52,11 +50,37 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.integralblue</groupId>
+            <artifactId>log4jdbc-spring-boot-starter</artifactId>
+            <version>${log4jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>${querydsl.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <version>${querydsl.version}</version>
+        </dependency>
         <!--		test scope-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>${testcontainers.mysql}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -74,68 +98,25 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/database/**/*.class</exclude>
-                        <exclude>**/dto/**/*.class</exclude>
-                        <exclude>**/config/**/*.class</exclude>
-                        <exclude>**/listener/**/*.class</exclude>
-                        <exclude>**/exception/**/*.class</exclude>
-                    </excludes>
-                </configuration>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+                <version>1.1.3</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>check-minimum</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>check</goal>
+                            <goal>process</goal>
                         </goals>
                         <configuration>
-                            <rules>
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>INSTRUCTION</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.1</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
+                            <outputDirectory>target/generated-sources/java</outputDirectory>
+                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>${site-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${reports-plugin.version}</version>
-            </plugin>
         </plugins>
         <resources>
             <resource>
-                <directory>crm</directory>
+                <directory>crm-codereview</directory>
                 <excludes>
                     <exclude>./build/**/</exclude>
                     <exclude>./node_modules/**/</exclude>
@@ -147,4 +128,5 @@
             </resource>
         </resources>
     </build>
+
 </project>

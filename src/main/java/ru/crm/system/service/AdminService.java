@@ -33,4 +33,15 @@ public class AdminService {
         return adminRepository.findById(id)
                 .map(adminReadMapper::map);
     }
+
+    @Transactional
+    public boolean delete(Integer id) {
+        return adminRepository.findById(id)
+                .map(admin -> {
+                    adminRepository.delete(admin);
+                    adminRepository.flush();
+                    return true;
+                })
+                .orElse(false);
+    }
 }

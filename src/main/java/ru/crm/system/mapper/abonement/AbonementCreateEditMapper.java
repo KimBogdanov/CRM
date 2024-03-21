@@ -29,12 +29,6 @@ public class AbonementCreateEditMapper implements Mapper<AbonementCreatEditDto, 
                 .build();
     }
 
-//    private AbonementType getTypeByName(String name) {
-//        return Optional.ofNullable(name)
-//                .map(abonementTypeRepository::getTypeByName)
-//                .orElse(null);
-//    }
-
     private Student getStudent(Integer id) {
         return Optional.ofNullable(id)
                 .flatMap(studentRepository::findById)

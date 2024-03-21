@@ -1,8 +1,6 @@
 package ru.crm.system.unit.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,8 +11,6 @@ import ru.crm.system.service.ApplicationContentService;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.mockito.Mockito.when;
 
@@ -31,11 +27,11 @@ public class ApplicationContentServiceTest {
     @InjectMocks
     private ApplicationContentService applicationContentService;
 
-    @SneakyThrows
-    @AfterEach
-    void clearData() {
-        Files.deleteIfExists(Path.of(applicationContentService.getBucket(), TEST_PHOTO));
-    }
+//    @SneakyThrows
+//    @AfterEach
+//    void clearData() {
+//        Files.deleteIfExists(Path.of(applicationContentService.getBucket(), TEST_PHOTO));
+//    }
 
     @Test
     void uploadImage_shouldUploadImage_whenImageExists() throws IOException {

@@ -1,9 +1,10 @@
 package ru.crm.system.database.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,9 +18,10 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @Entity
-public class SalaryLog implements BaseEntity<Integer> {
+public class SalaryLog extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

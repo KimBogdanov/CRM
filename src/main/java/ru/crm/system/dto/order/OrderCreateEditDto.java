@@ -11,15 +11,22 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 @FieldNameConstants
-public final class OrderCreateEditDto {
+public class OrderCreateEditDto {
+
+    private Integer adminId;
+
     private OrderStatus status;
+
     @NotBlank
     private String orderName;
+
     @NotBlank
     private String clientName;
+
     @NotBlank
     private String phone;
+
     private String requestSource;
+
     private LocalDateTime createdAt;
-    private Integer adminId;
 }
